@@ -16,7 +16,10 @@ import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.item.AugmentWrapper;
+import com.hrznstudio.titanium.util.TagUtil;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
@@ -52,12 +55,12 @@ public class MobDuplicatorTile extends IndustrialAreaWorkingTile<MobDuplicatorTi
 				.setColor(DyeColor.LIME)
 				.setTankAction(FluidTankComponent.Action.FILL)
 				.setComponentHarness(this)
-				.setValidator(fluidStack -> ForgeRegistries.FLUIDS.tags().getTag(IndustrialTags.Fluids.EXPERIENCE).contains(fluidStack.getFluid()))
+				.setValidator(fluidStack -> TagUtil.getAllEntries(Registry.FLUID, IndustrialTags.Fluids.EXPERIENCE).contains(fluidStack.getFluid()))
 		);
 
 		this.addInventory(input = (SidedInventoryComponent<MobDuplicatorTile>) new SidedInventoryComponent<MobDuplicatorTile>("mob_imprisonment_tool", 64, 22, 1, 1)
 				.setColor(DyeColor.ORANGE)
-				.setInputFilter((itemStack, integer) -> itemStack.getItem().equals(ModuleTool.MOB_IMPRISONMENT_TOOL.get()))
+				.setInputFilter((itemStack, integer) -> itemStack.getItem().equals(ModuleTool.MOB_IMPRISONMENT_TOOL))
 				.setComponentHarness(this)
 		);
 
@@ -80,7 +83,7 @@ public class MobDuplicatorTile extends IndustrialAreaWorkingTile<MobDuplicatorTi
 		entityAmount.removeIf(entityLiving -> !entityLiving.isAlive());
 		if (entityAmount.size() > 32) return new WorkAction(1, 0);
 
-		int essenceNeeded = (int) (entity.getHealth() * MobDuplicatorConfig.essenceNeeded);
+		long essenceNeeded = (long) ((entity.getHealth() * MobDuplicatorConfig.essenceNeeded) * 81L);
 		int canSpawn = (int) ((tank.getFluid().isEmpty() ? 0 : tank.getFluid().getAmount()) / Math.max(essenceNeeded, 1));
 		if (canSpawn == 0) return new WorkAction(1, 0);
 
@@ -110,7 +113,9 @@ public class MobDuplicatorTile extends IndustrialAreaWorkingTile<MobDuplicatorTi
 
 				this.level.addFreshEntity(entity);
 
-				tank.drainForced(essenceNeeded, IFluidHandler.FluidAction.EXECUTE);
+				Transaction transaction = Transaction.openOuter();
+				tank.extract(tank.getFluid().getType(), essenceNeeded, transaction);
+				transaction.commit();
 			}
 			--spawnAmount;
 		}

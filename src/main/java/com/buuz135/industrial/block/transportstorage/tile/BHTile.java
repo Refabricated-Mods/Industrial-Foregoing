@@ -67,7 +67,7 @@ public abstract class BHTile<T extends BHTile<T>> extends ActiveTile<T> {
         this.display = true;
         addButton(new ButtonComponent(82+ 20 * 3, 64+16, 18, 18) {
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override

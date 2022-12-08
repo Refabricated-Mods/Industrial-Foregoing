@@ -231,7 +231,7 @@ public class ItemInfinityTrident extends ItemInfinity {
     }
 
     //GUI Stuff
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
     public List<IFactory<? extends IScreenAddon>> getScreenAddons(Supplier<ItemStack> stack) {
         List<IFactory<? extends IScreenAddon>> factory = super.getScreenAddons(stack);

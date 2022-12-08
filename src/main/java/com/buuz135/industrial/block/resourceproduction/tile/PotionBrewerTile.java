@@ -96,7 +96,7 @@ public class PotionBrewerTile extends IndustrialProcessingTile<PotionBrewerTile>
         );
         addProgressBar(blaze = new ProgressBarComponent<PotionBrewerTile>(30, 20, 100) {
                     @Override
-                    @OnlyIn(Dist.CLIENT)
+                    @Environment(EnvType.CLIENT)
                     public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                         return Collections.singletonList(() -> new ProgressBarScreenAddon<PotionBrewerTile>(30, 20, this) {
                             @Override

@@ -147,11 +147,11 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
                             ether.drainForced(((HydroponicBedTile) tile).getEther().fill(new FluidStack(ModuleCore.ETHER.getSourceFluid().get(), ether.drainForced(difference, IFluidHandler.FluidAction.SIMULATE).getAmount()), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
                         }
                     }
-                    difference = getEnergyStorage().getEnergyStored() - ((HydroponicBedTile) tile).getEnergyStorage().getEnergyStored();
+                    difference = getEnergyStorage().getAmount() - ((HydroponicBedTile) tile).getEnergyStorage().getAmount();
                     if (difference > 0) {
                         if (difference <= 1000 && difference > 1) difference = difference / 2;
                         if (difference > 1000) difference = 1000;
-                        if (getEnergyStorage().getEnergyStored() >= difference) {
+                        if (getEnergyStorage().getAmount() >= difference) {
                             getEnergyStorage().extractEnergy(((HydroponicBedTile) tile).getEnergyStorage().receiveEnergy(difference, false), false);
                         }
                     }

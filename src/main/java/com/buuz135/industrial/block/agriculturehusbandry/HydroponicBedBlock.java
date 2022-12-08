@@ -65,7 +65,7 @@ public class HydroponicBedBlock extends IndustrialBlock<HydroponicBedTile> {
                 .define('D', Blocks.DIRT)
                 .define('G', IndustrialTags.Items.GEAR_GOLD)
                 .define('S', Items.IRON_HOE)
-                .define('B', ModuleCore.FERTILIZER.get())
+                .define('B', ModuleCore.FERTILIZER)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_SIMPLE)
                 .save(consumer);
     }

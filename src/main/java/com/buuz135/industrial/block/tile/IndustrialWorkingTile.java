@@ -34,6 +34,9 @@ import com.hrznstudio.titanium.client.screen.asset.IAssetProvider;
 import com.hrznstudio.titanium.component.progress.ProgressBarComponent;
 import com.hrznstudio.titanium.item.AugmentWrapper;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -48,9 +51,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.text.DecimalFormat;
@@ -63,11 +63,11 @@ public abstract class IndustrialWorkingTile<T extends IndustrialWorkingTile<T>> 
     @Save
     private ProgressBarComponent<T> workingBar;
 
-    public IndustrialWorkingTile(Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> basicTileBlock, int estimatedPower, BlockPos blockPos, BlockState blockState) {
+    public IndustrialWorkingTile(Pair<Block, BlockEntityType<?>> basicTileBlock, int estimatedPower, BlockPos blockPos, BlockState blockState) {
         super(basicTileBlock, blockPos, blockState);
         this.addProgressBar(workingBar = new ProgressBarComponent<T>(30, 20, getMaxProgress(), getMaxProgress()) {
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new ProgressBarScreenAddon(30, 20, workingBar) {
                     @Override
@@ -89,11 +89,15 @@ public abstract class IndustrialWorkingTile<T extends IndustrialWorkingTile<T>> 
                 .setOnFinishWork(() -> {
                     if (isServer()) {
                         WorkAction work = work();
-                        this.getEnergyStorage().extractEnergy(work.getEnergyConsumed(), false);
+                        Transaction transaction = Transaction.openOuter();
+                        this.getEnergyStorage().extract(work.getEnergyConsumed(), transaction);
+                        transaction.commit();
                         int operations = (int) (this.hasAugmentInstalled(ProcessingAddonItem.PROCESSING) ? AugmentWrapper.getType(this.getInstalledAugments(ProcessingAddonItem.PROCESSING).get(0), ProcessingAddonItem.PROCESSING) - 1 : 0);
                         for (int i = 0; i < operations; i++) {
                             work = work();
-                            this.getEnergyStorage().extractEnergy(work.getEnergyConsumed(), false);
+                            transaction = Transaction.openOuter();
+                            this.getEnergyStorage().extract(work.getEnergyConsumed(), transaction);
+                            transaction.commit();
                         }
                         int maxProgress = (int) Math.floor(getMaxProgress() * (this.hasAugmentInstalled(AugmentTypes.EFFICIENCY) ? AugmentWrapper.getType(this.getInstalledAugments(AugmentTypes.EFFICIENCY).get(0), AugmentTypes.EFFICIENCY) : 1));
                         workingBar.setMaxProgress(maxProgress);
@@ -120,7 +124,7 @@ public abstract class IndustrialWorkingTile<T extends IndustrialWorkingTile<T>> 
     public abstract WorkAction work();
 
     public boolean hasEnergy(int amount) {
-        return this.getEnergyStorage().getEnergyStored() >= amount;
+        return this.getEnergyStorage().getAmount() >= amount;
     }
 
     public int getMaxProgress() {

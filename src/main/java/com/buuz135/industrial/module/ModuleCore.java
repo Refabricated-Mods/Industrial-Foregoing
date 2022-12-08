@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.module;
 
+import com.buuz135.industrial.IndustrialForegoing;
+import com.buuz135.industrial.api.plant.PlantRecollectable;
 import com.buuz135.industrial.api.straw.StrawHandler;
 import com.buuz135.industrial.block.MachineFrameBlock;
 import com.buuz135.industrial.block.core.DarkGlassBlock;
@@ -43,8 +45,14 @@ import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.fluid.TitaniumFluidInstance;
 import com.hrznstudio.titanium.module.DeferredRegistryHelper;
+import com.hrznstudio.titanium.module.RegistryHelper;
 import com.hrznstudio.titanium.tab.AdvancedTitaniumTab;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
+import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
@@ -69,29 +77,31 @@ public class ModuleCore implements IModule {
 
     public static AdvancedTitaniumTab TAB_CORE = new AdvancedTitaniumTab(Reference.MOD_ID + "_core", true);
 
-    public static RegistryObject<Item> TINY_DRY_RUBBER;
-    public static RegistryObject<Item> DRY_RUBBER;
-    public static RegistryObject<Item> PLASTIC;
-    public static RegistryObject<Item> FERTILIZER;
-    public static RegistryObject<Item> PINK_SLIME_ITEM;
-    public static RegistryObject<Item> PINK_SLIME_INGOT;
-    public static RegistryObject<Item> STRAW;
-    public static RegistryObject<Block> PITY;
-    public static RegistryObject<Block> SIMPLE;
-    public static RegistryObject<Block> ADVANCED;
-    public static RegistryObject<Block> SUPREME;
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> FLUID_EXTRACTOR;
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> LATEX_PROCESSING;
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> DISSOLUTION_CHAMBER;
-    public static RegistryObject<Item>[] RANGE_ADDONS = new RegistryObject[12];
-    public static RegistryObject<Item>[] LASER_LENS = new RegistryObject[DyeColor.values().length];
-    public static RegistryObject<Item> SPEED_ADDON_1;
-    public static RegistryObject<Item> SPEED_ADDON_2;
-    public static RegistryObject<Item> EFFICIENCY_ADDON_1;
-    public static RegistryObject<Item> EFFICIENCY_ADDON_2;
-    public static RegistryObject<Item> PROCESSING_ADDON_1;
-    public static RegistryObject<Item> PROCESSING_ADDON_2;
-    public static RegistryObject<Block> DARK_GLASS;
+    public static Registry<PlantRecollectable> PLANT_RECOLLECTABLE = FabricRegistryBuilder.createSimple(PlantRecollectable.class, new ResourceLocation(Reference.MOD_ID, "plant_recollectable")).buildAndRegister();
+
+    public static Item TINY_DRY_RUBBER;
+    public static Item DRY_RUBBER;
+    public static Item PLASTIC;
+    public static Item FERTILIZER;
+    public static Item PINK_SLIME_ITEM;
+    public static Item PINK_SLIME_INGOT;
+    public static Item STRAW;
+    public static Block PITY;
+    public static Block SIMPLE;
+    public static Block ADVANCED;
+    public static Block SUPREME;
+    public static Pair<Block, BlockEntityType<?>> FLUID_EXTRACTOR;
+    public static Pair<Block, BlockEntityType<?>> LATEX_PROCESSING;
+    public static Pair<Block, BlockEntityType<?>> DISSOLUTION_CHAMBER;
+    public static Item[] RANGE_ADDONS = new Item[12];
+    public static Item[] LASER_LENS = new Item[DyeColor.values().length];
+    public static Item SPEED_ADDON_1;
+    public static Item SPEED_ADDON_2;
+    public static Item EFFICIENCY_ADDON_1;
+    public static Item EFFICIENCY_ADDON_2;
+    public static Item PROCESSING_ADDON_1;
+    public static Item PROCESSING_ADDON_2;
+    public static Block DARK_GLASS;
 
     public static TitaniumFluidInstance LATEX;
     public static TitaniumFluidInstance MEAT;
@@ -104,13 +114,13 @@ public class ModuleCore implements IModule {
     public static OreFluidInstance RAW_ORE_MEAT;
     public static OreFluidInstance FERMENTED_ORE_MEAT;
 
-    public static RegistryObject<Item> IRON_GEAR;
-    public static RegistryObject<Item> GOLD_GEAR;
-    public static RegistryObject<Item> DIAMOND_GEAR;
+    public static Item IRON_GEAR;
+    public static Item GOLD_GEAR;
+    public static Item DIAMOND_GEAR;
 
 
     @Override
-    public void generateFeatures(DeferredRegistryHelper helper) {
+    public void generateFeatures(RegistryHelper helper) {
         PITY_RARITY = Rarity.create("pity", ChatFormatting.GREEN);
         SIMPLE_RARITY = Rarity.create("simple", ChatFormatting.AQUA);
         ADVANCED_RARITY = Rarity.create("advanced", ChatFormatting.LIGHT_PURPLE);
@@ -166,12 +176,12 @@ public class ModuleCore implements IModule {
         DIAMOND_GEAR = helper.registerGeneric(Item.class, "diamond_gear", () -> new Item(new Item.Properties().tab(TAB_CORE)));
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void textureStitch(TextureStitchEvent.Pre event) {
         //event.addSprite(LATEX.getSourceFluid().getAttributes().getFlowingTexture()); ??
         //event.addSprite(LATEX.getSourceFluid().getAttributes().getStillTexture());
     }
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void onClient(){
         EventManager.mod(TextureStitchEvent.Pre.class).process(this::textureStitch).subscribe();
     }

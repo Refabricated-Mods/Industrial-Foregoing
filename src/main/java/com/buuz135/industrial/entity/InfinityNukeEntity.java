@@ -70,9 +70,9 @@ public class InfinityNukeEntity extends Entity {
     private int radius = 1;
     private int ticksExploding = 1;
     private ProcessExplosion explosionHelper;
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private TickeableSound chargingSound;
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private TickeableSound explodingSound;
 
     public InfinityNukeEntity(EntityType<? extends InfinityNukeEntity> entityTypeIn, Level worldIn) {
@@ -123,7 +123,7 @@ public class InfinityNukeEntity extends Entity {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void tickClient() {
         if (chargingSound == null && this.getEntityData().get(EXPLODING)) {
             Minecraft.getInstance().getSoundManager().play(chargingSound = new TickeableSound(this.level, this.blockPosition(), ModuleTool.NUKE_CHARGING.get(), getRadius(), 10));
@@ -205,7 +205,7 @@ public class InfinityNukeEntity extends Entity {
         return super.interact(player, hand);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void arm() {
         Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(ClientProxy.NUKE_ARMING, SoundSource.BLOCKS, 1, 1, this.blockPosition()));
     }

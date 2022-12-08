@@ -114,7 +114,7 @@ public class FermentationStationTile extends IndustrialProcessingTile<Fermentati
         this.isSealed = false;
         addButton(new ButtonComponent(75, 22, 14, 14) {
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() ->
                         new StateButtonAddon(this, Arrays.stream(SealType.values()).map(sealType -> sealType.info).toArray(StateButtonInfo[]::new)) {
@@ -130,7 +130,7 @@ public class FermentationStationTile extends IndustrialProcessingTile<Fermentati
         }));
         addButton(new ButtonComponent(110, 22, 14, 14) {
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() ->
                         new StateButtonAddon(this, Arrays.stream(ProductionType.values()).map(sealType -> sealType.info).toArray(StateButtonInfo[]::new)) {
@@ -140,7 +140,7 @@ public class FermentationStationTile extends IndustrialProcessingTile<Fermentati
                             }
 
                             @Override
-                            @OnlyIn(Dist.CLIENT)
+                            @Environment(EnvType.CLIENT)
                             public List<Component> getTooltipLines() {
                                 ProductionType type = ProductionType.values()[production];
                                 List<Component> list = new ArrayList<>(super.getTooltipLines());

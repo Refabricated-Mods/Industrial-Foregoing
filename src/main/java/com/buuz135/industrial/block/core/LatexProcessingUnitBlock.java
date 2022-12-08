@@ -27,12 +27,12 @@ import com.buuz135.industrial.block.core.tile.LatexProcessingUnitTile;
 import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
+import me.alphamode.forgetags.Tags;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
@@ -61,7 +61,7 @@ public class LatexProcessingUnitBlock extends IndustrialBlock<LatexProcessingUni
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('G', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .define('B', Items.WATER_BUCKET)
-                .define('L', ModuleCore.LATEX.getBucketFluid().get())
+                .define('L', ModuleCore.LATEX.getBucketFluid())
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_PITY)
                 .define('F', Blocks.FURNACE)
                 .save(consumer);

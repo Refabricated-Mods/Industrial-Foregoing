@@ -26,6 +26,14 @@ import com.buuz135.industrial.fluid.OreTitaniumFluidAttributes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -41,12 +49,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.IReverseTag;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -64,9 +66,9 @@ public class ItemStackUtils {
         return null;
     }
 
-    public static boolean isInventoryFull(ItemStackHandler handler) {
-        for (int i = 0; i < handler.getSlots(); ++i) {
-            if (handler.getStackInSlot(i).isEmpty()) return false;
+    public static boolean isInventoryFull(Storage<ItemVariant> handler) {
+        for (StorageView<ItemVariant> view : handler.iterable(Transaction.openOuter())){
+            if (view.isResourceBlank()) return false;
         }
         return true;
     }
@@ -76,11 +78,11 @@ public class ItemStackUtils {
     }
 
     public static boolean acceptsFluidItem(ItemStack stack) {
-        return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();// && !stack.getItem().equals(ForgeModContainer.getInstance().universalBucket);
+        return ContainerItemContext.withInitial(stack).find(FluidStorage.ITEM) != null;
     }
 
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static int getColor(ItemStack stack) {
         return ColorUtils.getColorFrom(Minecraft.getInstance().getItemRenderer().getModel(stack, Minecraft.getInstance().level, Minecraft.getInstance().player, 0).getParticleIcon());
     }

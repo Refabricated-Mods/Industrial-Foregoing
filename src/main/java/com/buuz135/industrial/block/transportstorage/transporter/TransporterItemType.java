@@ -197,7 +197,7 @@ public class TransporterItemType extends FilteredTransporterType<ItemStack, IIte
         this.queue.computeIfAbsent(origin, direction -> new ArrayList<>()).add(0, ItemStack.of(compoundNBT));
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
     public void renderTransfer(Vector3f pos, Direction direction, int step, PoseStack stack, int combinedOverlayIn, MultiBufferSource buffer, float frame) {
         super.renderTransfer(pos, direction, step, stack, combinedOverlayIn, buffer, frame);

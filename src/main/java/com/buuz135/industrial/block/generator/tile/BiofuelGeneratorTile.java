@@ -31,10 +31,10 @@ import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.component.progress.ProgressBarComponent;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 
@@ -52,7 +52,7 @@ public class BiofuelGeneratorTile extends IndustrialGeneratorTile<BiofuelGenerat
                 setColor(DyeColor.PURPLE).
                 setComponentHarness(this).
                 setTankAction(FluidTankComponent.Action.FILL).
-                setValidator(fluidStack -> fluidStack.getFluid().isSame(ModuleCore.BIOFUEL.getSourceFluid().get()))
+                setValidator(fluidStack -> fluidStack.getFluid().isSame(ModuleCore.BIOFUEL.getSourceFluid()))
         );
         this.getPowerPerTick = BiofuelGeneratorConfig.powerPerTick;
         this.getExtractionRate = BiofuelGeneratorConfig.extractionRate;
@@ -61,7 +61,9 @@ public class BiofuelGeneratorTile extends IndustrialGeneratorTile<BiofuelGenerat
     @Override
     public int consumeFuel() {
         if (biofuel.getFluidAmount() > 0) {
-            biofuel.drainForced(1, IFluidHandler.FluidAction.EXECUTE);
+            Transaction transaction = Transaction.openOuter();
+            biofuel.extract(biofuel.variant, 81, transaction);
+            transaction.commit();
             return 4;
         }
         return 0;
@@ -69,7 +71,7 @@ public class BiofuelGeneratorTile extends IndustrialGeneratorTile<BiofuelGenerat
 
     @Override
     public boolean canStart() {
-        return biofuel.getFluidAmount() > 0 && this.getEnergyStorage().getEnergyStored() < this.getEnergyStorage().getMaxEnergyStored();
+        return biofuel.getFluidAmount() > 0 && this.getEnergyStorage().getAmount() < this.getEnergyStorage().getCapacity();
     }
 
     @Override

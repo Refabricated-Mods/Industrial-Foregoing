@@ -36,6 +36,9 @@ import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.component.progress.ProgressBarComponent;
 
+import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -47,10 +50,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -69,7 +68,7 @@ public class MycelialGeneratorTile extends IndustrialGeneratorTile<MycelialGener
     @Save
     private String owner;
 
-    public MycelialGeneratorTile(Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> basicTileBlock, IMycelialGeneratorType type, BlockPos blockPos, BlockState blockState) {
+    public MycelialGeneratorTile(Pair<Block, BlockEntityType<?>> basicTileBlock, IMycelialGeneratorType type, BlockPos blockPos, BlockState blockState) {
         super(basicTileBlock, blockPos, blockState);
         this.type = type;
         this.powerGeneration = 10;
@@ -94,7 +93,7 @@ public class MycelialGeneratorTile extends IndustrialGeneratorTile<MycelialGener
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void initClient() {
         super.initClient();
         addGuiAddonFactory(() -> new GeneratorBackgroundScreenAddon(128, 39, type));
@@ -121,11 +120,11 @@ public class MycelialGeneratorTile extends IndustrialGeneratorTile<MycelialGener
     public ProgressBarComponent<MycelialGeneratorTile> getProgressBar() {
          bar = new ProgressBarComponent<MycelialGeneratorTile>(30, 20, 0, 100){
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new ProgressBarScreenAddon(30, 20, bar){
                     @Override
-                    @OnlyIn(Dist.CLIENT)
+                    @Environment(EnvType.CLIENT)
                     public List<Component> getTooltipLines() {
                         List<Component> tooltip = new ArrayList<>();
                         tooltip.add(new TextComponent(ChatFormatting.GOLD + new TranslatableComponent("tooltip.titanium.progressbar.progress").getString() +  ChatFormatting.WHITE + new DecimalFormat().format(bar.getProgress()) + ChatFormatting.GOLD + "/" + ChatFormatting.WHITE + new DecimalFormat().format(bar.getMaxProgress())));

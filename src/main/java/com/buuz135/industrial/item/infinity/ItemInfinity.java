@@ -379,7 +379,7 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
 
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
     public List<IFactory<? extends IScreenAddon>> getScreenAddons(Supplier<ItemStack> stack) {
         List<IFactory<? extends IScreenAddon>> factory = new ArrayList<>();
@@ -434,7 +434,7 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
 
             @Nonnull
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new TankScreenAddon(30, 20, this, FluidTankComponent.Type.NORMAL));
             }

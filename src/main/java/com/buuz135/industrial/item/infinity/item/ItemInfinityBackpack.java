@@ -527,7 +527,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
         }).orElse(null);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
     public List<IFactory<? extends IScreenAddon>> getScreenAddons(Supplier<ItemStack> stack) {
         List<IFactory<? extends IScreenAddon>> factory = new ArrayList<>();

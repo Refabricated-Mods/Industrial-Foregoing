@@ -66,7 +66,7 @@ public class BiofuelGeneratorBlock extends IndustrialBlock<BiofuelGeneratorTile>
                 .define('P', IndustrialTags.Items.PLASTIC)
                 .define('D', Blocks.FURNACE)
                 .define('S', Blocks.PISTON)
-                .define('A', TagUtil.getItemTag(new ResourceLocation("forge:gears/gold")))
+                .define('A', TagUtil.getItemTag(new ResourceLocation("c:gears/gold")))
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_PITY)
                 .save(consumer);
     }

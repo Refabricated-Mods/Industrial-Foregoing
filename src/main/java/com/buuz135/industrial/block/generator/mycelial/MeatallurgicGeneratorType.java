@@ -27,6 +27,9 @@ import com.buuz135.industrial.plugin.jei.generator.MycelialGeneratorRecipe;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
+import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
+import me.alphamode.forgetags.Tags;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -34,10 +37,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import io.github.fabricators_of_create.porting_lib.util.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class MeatallurgicGeneratorType implements IMycelialGeneratorType{
 
     @Override
     public List<Predicate<FluidStack>> getTankInputPredicates() {
-        return Arrays.asList(fluidStack -> fluidStack.getFluid().isSame(ModuleCore.MEAT.getSourceFluid().get()), null);
+        return Arrays.asList(fluidStack -> fluidStack.getFluid().isSame(ModuleCore.MEAT.getSourceFluid()), null);
     }
 
     @Override
@@ -76,10 +76,11 @@ public class MeatallurgicGeneratorType implements IMycelialGeneratorType{
 
     @Override
     public Pair<Integer, Integer> getTimeAndPowerGeneration(INBTSerializable<CompoundTag>[] inputs) {
-        if (inputs.length >= 2 && inputs[0] instanceof SidedFluidTankComponent && inputs[1] instanceof SidedInventoryComponent){
-            if (((SidedFluidTankComponent<?>) inputs[0]).getFluidAmount() >= 250 && ((SidedInventoryComponent<?>) inputs[1]).getStackInSlot(0).getCount() > 0){
-                ((SidedFluidTankComponent<?>) inputs[0]).drainForced(250, IFluidHandler.FluidAction.EXECUTE);
-                ((SidedInventoryComponent<?>) inputs[1]).getStackInSlot(0).shrink(1);
+        if (inputs.length >= 2 && inputs[0] instanceof SidedFluidTankComponent<?> fluidTankComponent && inputs[1] instanceof SidedInventoryComponent inventoryComponent){
+            if (fluidTankComponent.getFluidAmount() >= 250*81 && inventoryComponent.getStackInSlot(0).getCount() > 0){
+                Transaction transaction = Transaction.openOuter();
+                fluidTankComponent.extract(fluidTankComponent.getResource(), 250*81, transaction);
+                inventoryComponent.getStackInSlot(0).shrink(1);
                 return Pair.of(20*20, 200);
             }
         }
@@ -103,13 +104,13 @@ public class MeatallurgicGeneratorType implements IMycelialGeneratorType{
 
     @Override
     public List<MycelialGeneratorRecipe> getRecipes() {
-        return Collections.singletonList(new MycelialGeneratorRecipe(Arrays.asList(new ArrayList<>(), Collections.singletonList(Ingredient.of(Tags.Items.INGOTS))), Arrays.asList(Collections.singletonList(new FluidStack(ModuleCore.MEAT.getSourceFluid().get(), 250)), Collections.emptyList()), 20*20, 100));
+        return Collections.singletonList(new MycelialGeneratorRecipe(Arrays.asList(new ArrayList<>(), Collections.singletonList(Ingredient.of(Tags.Items.INGOTS))), Arrays.asList(Collections.singletonList(new FluidStack(ModuleCore.MEAT.getSourceFluid(), 250)), Collections.emptyList()), 20*20, 100));
     }
 
     @Override
     public ShapedRecipeBuilder addIngredients(ShapedRecipeBuilder recipeBuilder) {
         recipeBuilder = recipeBuilder.define('B', Tags.Items.INGOTS)
-                .define('C', ModuleCore.MEAT.getBucketFluid().get())
+                .define('C', ModuleCore.MEAT.getBucketFluid())
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_SUPREME);
         return recipeBuilder;
     }

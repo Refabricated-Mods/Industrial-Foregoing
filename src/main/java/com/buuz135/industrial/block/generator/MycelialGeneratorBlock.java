@@ -32,9 +32,6 @@ import com.buuz135.industrial.block.generator.tile.MycelialGeneratorTile;
 import com.buuz135.industrial.module.ModuleGenerator;
 import com.buuz135.industrial.utils.Reference;
 import com.buuz135.industrial.worlddata.MycelialDataManager;
-import com.hrznstudio.titanium.module.DeferredRegistryHelper;
-import com.hrznstudio.titanium.module.api.RegistryManager;
-import com.hrznstudio.titanium.nbthandler.NBTManager;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.mojang.datafixers.types.Type;
 

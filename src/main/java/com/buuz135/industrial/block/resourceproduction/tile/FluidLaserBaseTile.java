@@ -82,7 +82,7 @@ public class FluidLaserBaseTile extends IndustrialMachineTile<FluidLaserBaseTile
         this.miningDepth = this.getBlockPos().getY();
         this.addProgressBar(work = new ProgressBarComponent<FluidLaserBaseTile>(74, 24 + 18, 0, FluidLaserBaseConfig.maxProgress){
                     @Override
-                    @OnlyIn(Dist.CLIENT)
+                    @Environment(EnvType.CLIENT)
                     public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                         return Collections.singletonList(() -> new ProgressBarScreenAddon<FluidLaserBaseTile>(work.getPosX(), work.getPosY(), this){
                             @Override
@@ -128,7 +128,7 @@ public class FluidLaserBaseTile extends IndustrialMachineTile<FluidLaserBaseTile
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void initClient() {
         super.initClient();
         this.addGuiAddonFactory(() -> new TextScreenAddon("" ,70, 84 + 3, false){

@@ -22,7 +22,7 @@
 
 package com.buuz135.industrial.api.recipe;
 
-import net.minecraftforge.fluids.FluidStack;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class FluidDictionaryEntry {
         this.ratio = ratio;
     }
 
-    public boolean doesStackMatch(FluidStack fluidStack) {
+    public boolean doesStackMatch(FluidVariant fluidStack) {
         return fluidStack.getFluid().getRegistryName().toString().equals(fluidOrigin);
     }
 

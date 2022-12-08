@@ -76,7 +76,7 @@ public class FluidExtractorTile extends IndustrialAreaWorkingTile<FluidExtractor
                 currentRecipe = findRecipe(this.level, pos);
             if (currentRecipe != null) {//GetDimensionType
                 FluidExtractionProgress extractionProgress = EXTRACTION.computeIfAbsent(this.level.dimensionType(), dimensionType -> new HashMap<>()).computeIfAbsent(this.level.getChunkAt(pos).getPos(), chunkPos -> new HashMap<>()).computeIfAbsent(pos, pos1 -> new FluidExtractionProgress(this.level));
-                if (currentRecipe.output.getFluid().isSame(ModuleCore.LATEX.getSourceFluid().get())){
+                if (currentRecipe.output.getFluid().isSame(ModuleCore.LATEX.getSourceFluid())){
                     tank.fillForced(new FluidStack(currentRecipe.output.getFluid(), currentRecipe.output.getAmount() * (hasEnergy(powerPerOperation) ? 3 : 1)), IFluidHandler.FluidAction.EXECUTE);
                 } else {
                     tank.fillForced(currentRecipe.output.copy(), IFluidHandler.FluidAction.EXECUTE);

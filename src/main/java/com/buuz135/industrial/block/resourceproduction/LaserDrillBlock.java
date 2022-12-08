@@ -64,7 +64,7 @@ public class LaserDrillBlock extends IndustrialBlock<LaserDrillTile> {
         return RotationType.SIX_WAY;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
     public void animateTick(BlockState stateIn, Level world, BlockPos pos, Random rand) {
         if (world.getBlockEntity(pos) instanceof LaserDrillTile){

@@ -32,7 +32,12 @@ import com.buuz135.industrial.proxy.network.TransporterSyncMessage;
 import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.api.augment.AugmentTypes;
 import com.hrznstudio.titanium.item.AugmentWrapper;
+import com.hrznstudio.titanium.util.NBTUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemHandlerHelper;
+import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -49,11 +54,6 @@ import com.mojang.math.Vector3f;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.ModelDataManager;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -260,8 +260,8 @@ public class TransporterType implements INBTSerializable<CompoundTag> {
     public CompoundTag serializeNBT() {
         CompoundTag compoundNBT = new CompoundTag();
         compoundNBT.putBoolean("Insert", action == TransporterTypeFactory.TransporterAction.INSERT);
-        compoundNBT.put("Efficiency", this.efficiency.serializeNBT());
-        compoundNBT.put("Speed", this.speed.serializeNBT());
+        compoundNBT.put("Efficiency", NBTUtil.tagFromStack(this.efficiency));
+        compoundNBT.put("Speed", NBTUtil.tagFromStack(this.speed));
         return compoundNBT;
     }
 
@@ -280,7 +280,7 @@ public class TransporterType implements INBTSerializable<CompoundTag> {
         return this.efficiency.isEmpty() ? 1 : ((1 - AugmentWrapper.getType(this.efficiency, AugmentTypes.EFFICIENCY)) / 0.1f) * 32;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void renderTransfer(Vector3f pos, Direction direction, int step, PoseStack stack, int combinedOverlayIn, MultiBufferSource buffer, float frame) {
 
     }

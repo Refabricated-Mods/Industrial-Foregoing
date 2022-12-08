@@ -59,7 +59,7 @@ public class InfinityChargerTile extends IndustrialMachineTile<InfinityChargerTi
                         ((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).setEnergyStored(((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).getLongEnergyStored() - added);
                         markForUpdate();
                     } else {
-                        int extracted = this.getEnergyStorage().getEnergyStored();
+                        int extracted = this.getEnergyStorage().getAmount();
                         ((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).setEnergyStored(((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).getLongEnergyStored() - iEnergyStorage.receiveEnergy(extracted, false));
                         markForUpdate();
                     }

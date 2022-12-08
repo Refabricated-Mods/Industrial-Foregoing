@@ -26,12 +26,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PlantRecollectable extends ForgeRegistryEntry<PlantRecollectable> {
+public abstract class PlantRecollectable {
 
     public PlantRecollectable(String name) {
         //setRegistryName(name);

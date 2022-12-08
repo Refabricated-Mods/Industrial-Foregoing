@@ -66,7 +66,7 @@ public class InfinityLauncherProjectileEntity extends AbstractArrow {
         this.entityData.set(TIER, tier);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public InfinityLauncherProjectileEntity(Level worldIn, double x, double y, double z) {
         super((EntityType<? extends AbstractArrow>) ModuleTool.INFINITY_LAUNCHER_PROJECTILE_ENTITY_TYPE.get(), x, y, z, worldIn);
     }
@@ -109,12 +109,12 @@ public class InfinityLauncherProjectileEntity extends AbstractArrow {
         return new ItemStack(Blocks.STONE);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public boolean isEnchanted() {
         return false;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
     public boolean shouldRender(double x, double y, double z) {
         return true;

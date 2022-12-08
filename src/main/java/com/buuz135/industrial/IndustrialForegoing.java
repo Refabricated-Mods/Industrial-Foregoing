@@ -44,6 +44,8 @@ import com.hrznstudio.titanium.network.locator.PlayerInventoryFinder;
 import com.hrznstudio.titanium.reward.Reward;
 import com.hrznstudio.titanium.reward.RewardGiver;
 import com.hrznstudio.titanium.reward.RewardManager;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -187,7 +189,7 @@ public class IndustrialForegoing extends ModuleController {
         new ModuleMisc().generateFeatures(getRegistries());
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void initClient(){
         EventManager.mod(TextureStitchEvent.Pre.class).process(pre -> {
             if (pre.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS)){

@@ -33,7 +33,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.awt.*;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class ColorUtils {
 
     public static int getColorFrom(ResourceLocation location) {

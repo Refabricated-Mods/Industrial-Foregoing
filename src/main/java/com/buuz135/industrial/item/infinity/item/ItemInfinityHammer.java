@@ -276,7 +276,7 @@ public class ItemInfinityHammer extends ItemInfinity {
         tooltip.add(new TranslatableComponent("text.industrialforegoing.display.beheading").append(" " + level).withStyle(ChatFormatting.GRAY));
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
     public List<IFactory<? extends IScreenAddon>> getScreenAddons(Supplier<ItemStack> stack) {
         List<IFactory<? extends IScreenAddon>> factory = super.getScreenAddons(stack);

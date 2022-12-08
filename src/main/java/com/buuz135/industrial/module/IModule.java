@@ -22,10 +22,10 @@
 
 package com.buuz135.industrial.module;
 
-import com.hrznstudio.titanium.module.DeferredRegistryHelper;
+import com.hrznstudio.titanium.module.RegistryHelper;
 
 public interface IModule {
 
-    void generateFeatures(DeferredRegistryHelper helper);
+    void generateFeatures(RegistryHelper helper);
 
 }

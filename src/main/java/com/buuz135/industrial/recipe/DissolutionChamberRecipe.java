@@ -26,15 +26,17 @@ import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.hrznstudio.titanium.recipe.serializer.GenericSerializer;
 import com.hrznstudio.titanium.recipe.serializer.SerializableRecipe;
+import io.github.fabricators_of_create.porting_lib.util.FluidStack;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,11 +73,11 @@ public class DissolutionChamberRecipe extends SerializableRecipe {
         return false;
     }
 
-    public boolean matches(IItemHandler handler, FluidTankComponent tank) {
+    public boolean matches(Storage<ItemVariant> handler, FluidTankComponent tank) {
         if (input == null || tank == null || inputFluid == null) return false;
         List<ItemStack> handlerItems = new ArrayList<>();
-        for (int i = 0; i < handler.getSlots(); i++) {
-            if (!handler.getStackInSlot(i).isEmpty()) handlerItems.add(handler.getStackInSlot(i).copy());
+        for (StorageView<ItemVariant> view : handler.iterable(Transaction.openOuter())){
+            if (!view.isResourceBlank()) handlerItems.add(view.getResource().toStack((int) view.getAmount()));
         }
         for (Ingredient.Value iItemList : input) {
             boolean found = false;
@@ -94,7 +96,7 @@ public class DissolutionChamberRecipe extends SerializableRecipe {
             }
             if (!found) return false;
         }
-        return handlerItems.size() == 0 && tank.drainForced(inputFluid, IFluidHandler.FluidAction.SIMULATE).getAmount() == inputFluid.getAmount();
+        return handlerItems.size() == 0 && tank.simulateExtract(inputFluid.getType(), inputFluid.getAmount(), null) == inputFluid.getAmount();
     }
 
     @Override

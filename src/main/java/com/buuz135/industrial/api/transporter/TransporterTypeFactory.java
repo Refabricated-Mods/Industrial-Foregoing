@@ -30,7 +30,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public abstract class TransporterTypeFactory extends ForgeRegistryEntry<TransporterTypeFactory> implements IRecipeProvider {
+public abstract class TransporterTypeFactory implements IRecipeProvider {
 
     public static final ImmutableSet<Direction> ALL = ImmutableSet.copyOf(Direction.values());
     public static final ImmutableSet<Direction> HORIZONTAL = ImmutableSet.copyOf(Direction.Plane.HORIZONTAL.iterator());

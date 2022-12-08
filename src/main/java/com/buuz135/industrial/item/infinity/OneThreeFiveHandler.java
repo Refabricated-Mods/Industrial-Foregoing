@@ -52,7 +52,7 @@ public class OneThreeFiveHandler {
 
     public static HashMap<UUID, Long> SPECIAL_ENTITIES = new HashMap<>();
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.level != null && !Minecraft.getInstance().isPaused() && Minecraft.getInstance().player.level.getGameTime() % 5 == 0) {

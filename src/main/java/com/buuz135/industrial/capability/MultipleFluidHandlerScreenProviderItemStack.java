@@ -168,7 +168,7 @@ public class MultipleFluidHandlerScreenProviderItemStack  extends FluidHandlerSc
 
     @Nonnull
     @Override
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
         List<IFactory<? extends IScreenAddon>> addons = new ArrayList<>();
         for (int i = 0; i < tankDefinitions.length; i++) {

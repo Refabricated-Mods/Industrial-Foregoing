@@ -29,12 +29,12 @@ import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.api.IFactory;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.hrznstudio.titanium.util.TagUtil;
+import me.alphamode.forgetags.Tags;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.Items;
 import net.minecraft.tags.ItemTags;
-import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import java.util.function.Consumer;
@@ -68,7 +68,7 @@ public class AnimalFeederBlock extends IndustrialBlock<AnimalFeederTile> {
                 .define('P', IndustrialTags.Items.PLASTIC)
                 .define('A', Items.GOLDEN_APPLE)
                 .define('C', Items.GOLDEN_CARROT)
-                .define('G', TagUtil.getItemTag(new ResourceLocation("forge:gears/iron")))
+                .define('G', TagUtil.getItemTag(new ResourceLocation("c:gears/iron")))
                 .define('D', Tags.Items.DYES_PURPLE)
                 .define('M', IndustrialTags.Items.MACHINE_FRAME_PITY)
                 .save(consumer);

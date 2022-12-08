@@ -24,12 +24,13 @@ package com.buuz135.industrial.proxy.block.filter;
 
 import com.buuz135.industrial.item.MobImprisonmentToolItem;
 import com.buuz135.industrial.module.ModuleTool;
+import com.hrznstudio.titanium.util.NBTUtil;
+import io.github.fabricators_of_create.porting_lib.util.FluidStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
 public class ItemStackFilter extends AbstractFilter<Entity> {
@@ -53,8 +54,8 @@ public class ItemStackFilter extends AbstractFilter<Entity> {
         for (GhostSlot stack : this.getFilter()) {
             if (entity instanceof ItemEntity && stack.getStack().sameItem(((ItemEntity) entity).getItem()))
                 return true;
-            if (entity instanceof LivingEntity && stack.getStack().getItem().getRegistryName().equals(ModuleTool.MOB_IMPRISONMENT_TOOL.get().getRegistryName()) && ((MobImprisonmentToolItem)ModuleTool.MOB_IMPRISONMENT_TOOL.get()).containsEntity(stack.getStack())
-                    && entity.getType().getRegistryName().toString().equalsIgnoreCase(((MobImprisonmentToolItem)ModuleTool.MOB_IMPRISONMENT_TOOL.get()).getID(stack.getStack()))) {
+            if (entity instanceof LivingEntity && stack.getStack().getItem().getRegistryName().equals(ModuleTool.MOB_IMPRISONMENT_TOOL.getRegistryName()) && ((MobImprisonmentToolItem)ModuleTool.MOB_IMPRISONMENT_TOOL.get()).containsEntity(stack.getStack())
+                    && entity.getType().getRegistryName().toString().equalsIgnoreCase(((MobImprisonmentToolItem)ModuleTool.MOB_IMPRISONMENT_TOOL).getID(stack.getStack()))) {
                 return true;
             }
         }
@@ -98,7 +99,7 @@ public class ItemStackFilter extends AbstractFilter<Entity> {
         CompoundTag compound = new CompoundTag();
         for (int i = 0; i < this.getFilter().length; i++) {
             if (!this.getFilter()[i].getStack().isEmpty())
-                compound.put(String.valueOf(i), this.getFilter()[i].getStack().serializeNBT());
+                compound.put(String.valueOf(i), NBTUtil.tagFromStack(this.getFilter()[i].getStack()));
         }
         return compound;
     }

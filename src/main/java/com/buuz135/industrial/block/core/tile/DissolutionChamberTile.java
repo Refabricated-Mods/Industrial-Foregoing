@@ -34,11 +34,11 @@ import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.util.RecipeUtil;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -114,15 +114,17 @@ public class DissolutionChamberTile extends IndustrialProcessingTile<Dissolution
         return () -> {
             if (currentRecipe != null) {
                 DissolutionChamberRecipe dissolutionChamberRecipe = currentRecipe;
-                inputFluid.drainForced(dissolutionChamberRecipe.inputFluid, IFluidHandler.FluidAction.EXECUTE);
+                Transaction transaction = Transaction.openOuter();
+                inputFluid.extract(dissolutionChamberRecipe.inputFluid.getType(), dissolutionChamberRecipe.inputFluid.getAmount(), transaction);
                 for (int i = 0; i < input.getInventory().getSlots(); i++) {
                     input.getInventory().getStackInSlot(i).shrink(1);
                 }
                 if (dissolutionChamberRecipe.outputFluid != null && !dissolutionChamberRecipe.outputFluid.isEmpty())
-                    outputFluid.fillForced(dissolutionChamberRecipe.outputFluid.copy(), IFluidHandler.FluidAction.EXECUTE);
+                    outputFluid.insert(dissolutionChamberRecipe.outputFluid.getType(), dissolutionChamberRecipe.outputFluid.getAmount(), transaction);
                 ItemStack outputStack = dissolutionChamberRecipe.output.copy();
                 outputStack.getItem().onCraftedBy(outputStack, this.level, null);
                 ItemHandlerHelper.insertItem(output, outputStack, false);
+                transaction.commit();
                 checkForRecipe();
             }
         };

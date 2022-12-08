@@ -132,7 +132,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         this.generatorRecipe = DEFAULT.toString();
         addButton(new ButtonComponent(54, 64, 18, 18) {
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
@@ -196,7 +196,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         this.fourthRecipeId = 0;
         addButton(new ButtonComponent(62 + 20 * 1, 64, 18, 18) {
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
@@ -222,7 +222,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         }));
         addButton(new ButtonComponent(62 + 20 * 2, 64, 18, 18) {
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
@@ -248,7 +248,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         }));
         addButton(new ButtonComponent(62 + 20 * 3, 64, 18, 18) {
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
@@ -274,7 +274,7 @@ public class MaterialStoneWorkFactoryTile extends IndustrialProcessingTile<Mater
         }));
         addButton(new ButtonComponent(62 + 20 * 4, 64, 18, 18) {
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override

@@ -38,13 +38,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.tuple.Pair;
 
 public abstract class IndustrialGeneratorTile<T extends IndustrialGeneratorTile<T>> extends GeneratorTile<T> {
 
-    public IndustrialGeneratorTile(Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> basicTileBlock, BlockPos blockPos, BlockState blockState) {
-        super((BasicTileBlock<T>) basicTileBlock.getLeft().get(), basicTileBlock.getRight().get(), blockPos, blockState);
+    public IndustrialGeneratorTile(Pair<Block, BlockEntityType<?>> basicTileBlock, BlockPos blockPos, BlockState blockState) {
+        super((BasicTileBlock<T>) basicTileBlock.getLeft(), basicTileBlock.getRight(), blockPos, blockState);
     }
 
     @Override

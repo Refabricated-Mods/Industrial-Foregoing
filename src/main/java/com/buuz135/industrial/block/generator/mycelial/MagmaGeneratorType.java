@@ -26,6 +26,9 @@ import com.buuz135.industrial.plugin.jei.generator.MycelialGeneratorRecipe;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
+import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
+import me.alphamode.forgetags.Tags;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.DyeColor;
@@ -34,10 +37,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import io.github.fabricators_of_create.porting_lib.util.FluidStack;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -75,14 +75,16 @@ public class MagmaGeneratorType implements IMycelialGeneratorType{
 
     @Override
     public Pair<Integer, Integer> getTimeAndPowerGeneration(INBTSerializable<CompoundTag>[] inputs) {
-        if (inputs.length >= 2 && inputs[0] instanceof SidedFluidTankComponent && inputs[1] instanceof SidedInventoryComponent){
-            if (((SidedFluidTankComponent<?>) inputs[0]).getFluidAmount() >= 250){
-                ((SidedFluidTankComponent<?>) inputs[0]).drainForced(250, IFluidHandler.FluidAction.EXECUTE);
+        if (inputs.length >= 2 && inputs[0] instanceof SidedFluidTankComponent<?> fluidTankComponent && inputs[1] instanceof SidedInventoryComponent inventoryComponent){
+            if (fluidTankComponent.getFluidAmount() >= 250*81){
+                Transaction transaction = Transaction.openOuter();
+                fluidTankComponent.extract(fluidTankComponent.variant,250*81, transaction);
                 boolean hasRedstone = false;
-                if (((SidedInventoryComponent<?>) inputs[1]).getStackInSlot(0).getCount() > 0){
-                    ((SidedInventoryComponent<?>) inputs[1]).getStackInSlot(0).shrink(1);
+                if (inventoryComponent.getStackInSlot(0).getCount() > 0){
+                    inventoryComponent.getStackInSlot(0).shrink(1);
                     hasRedstone = true;
                 }
+                transaction.commit();
                 return Pair.of(2 * 250, hasRedstone ? 100 : 50);
             }
         }

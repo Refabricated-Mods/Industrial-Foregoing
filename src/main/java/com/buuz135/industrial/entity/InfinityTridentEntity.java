@@ -78,7 +78,7 @@ public class InfinityTridentEntity extends AbstractArrow {
         this.entityData.set(TIER, ItemInfinity.getSelectedTier(thrownStack).getRadius());
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public InfinityTridentEntity(Level worldIn, double x, double y, double z) {
         super((EntityType<? extends AbstractArrow>) ModuleTool.TRIDENT_ENTITY_TYPE.get(), x, y, z, worldIn);
         this.thrownStack = new ItemStack(ModuleTool.INFINITY_TRIDENT.get());
@@ -209,12 +209,12 @@ public class InfinityTridentEntity extends AbstractArrow {
         return this.thrownStack.copy();
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public boolean isEnchanted(){
         return false;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
     public boolean shouldRender(double x, double y, double z) {
         return true;

@@ -28,6 +28,7 @@ import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.api.IFactory;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
+import me.alphamode.forgetags.Tags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -37,7 +38,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

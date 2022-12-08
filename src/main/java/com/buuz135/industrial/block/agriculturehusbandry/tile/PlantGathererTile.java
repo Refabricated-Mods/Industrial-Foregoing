@@ -39,6 +39,7 @@ import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.component.progress.ProgressBarComponent;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
@@ -84,7 +85,7 @@ public class PlantGathererTile extends IndustrialAreaWorkingTile<PlantGathererTi
                 .setTankAction(FluidTankComponent.Action.FILL)
                 .setTankType(FluidTankComponent.Type.SMALL)
                 .setComponentHarness(this)
-                .setValidator(fluidStack -> fluidStack.getFluid().isSame(ModuleCore.ETHER.getSourceFluid().get()))
+                .setValidator(fluidStack -> fluidStack.getFluid().isSame(ModuleCore.ETHER.getSourceFluid()))
         );
         addProgressBar(etherBar =  new ProgressBarComponent<PlantGathererTile>(63, 20, 0, 100)
                 .setBarDirection(ProgressBarComponent.BarDirection.VERTICAL_UP)
@@ -99,7 +100,9 @@ public class PlantGathererTile extends IndustrialAreaWorkingTile<PlantGathererTi
     public IndustrialWorkingTile.WorkAction work() {
         if (this.etherBar.getProgress() == 0 && this.ether.getFluidAmount() > 0){
             this.etherBar.setProgress(this.etherBar.getMaxProgress());
-            this.ether.drainForced(1, IFluidHandler.FluidAction.EXECUTE);
+            Transaction transaction = Transaction.openOuter();
+            this.ether.extract(this.ether.variant, 81, transaction);
+            transaction.commit();
         }
         if (hasEnergy(powerPerOperation)) {
             int amount = Math.max(1, BlockUtils.getBlockPosInAABB(getWorkingArea().bounds()).size() / 30);

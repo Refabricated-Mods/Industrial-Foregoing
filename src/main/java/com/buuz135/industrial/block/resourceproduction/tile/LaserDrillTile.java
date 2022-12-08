@@ -52,7 +52,7 @@ public class LaserDrillTile extends IndustrialAreaWorkingTile<LaserDrillTile> {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void initClient() {
         super.initClient();
         addGuiAddonFactory(() -> new TextScreenAddon(ChatFormatting.DARK_GRAY + new TranslatableComponent("text.industrialforegoing.target").getString(), 44 ,26, false));

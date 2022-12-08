@@ -106,7 +106,7 @@ public class BlackHoleUnitTile extends BHTile<BlackHoleUnitTile> {
 
         addButton(new ButtonComponent(82+ 20 * 2, 64+16, 18, 18) {
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
@@ -131,7 +131,7 @@ public class BlackHoleUnitTile extends BHTile<BlackHoleUnitTile> {
         }));
         addButton(new ButtonComponent(82+ 20, 64+16, 18, 18) {
             @Override
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new BasicButtonAddon(this) {
                     @Override
@@ -157,7 +157,7 @@ public class BlackHoleUnitTile extends BHTile<BlackHoleUnitTile> {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void initClient() {
         super.initClient();
         this.addGuiAddonFactory(() -> new BigItemGuiAddon(79, 25) {

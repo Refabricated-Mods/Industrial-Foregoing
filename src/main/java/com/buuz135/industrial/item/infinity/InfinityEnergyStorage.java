@@ -121,7 +121,7 @@ public class InfinityEnergyStorage<T extends IComponentHarness> extends EnergySt
 
     @Nonnull
     @Override
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
         return Collections.singletonList(() -> new InfinityEnergyScreenAddon(getX(), getY(), this));
     }

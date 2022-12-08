@@ -43,6 +43,8 @@ import com.google.common.collect.ImmutableMap;
 import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.module.DeferredRegistryHelper;
 import com.hrznstudio.titanium.tab.AdvancedTitaniumTab;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.resources.model.BakedModel;
@@ -118,7 +120,7 @@ public class ModuleTransportStorage implements IModule {
 
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void conveyorBake(ModelBakeEvent event) {
         for (ResourceLocation resourceLocation : event.getModelRegistry().keySet()) {
             if (resourceLocation.getNamespace().equals(Reference.MOD_ID)) {
@@ -141,13 +143,13 @@ public class ModuleTransportStorage implements IModule {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void textureStitch(TextureStitchEvent.Pre pre) {
         if (pre.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS))
             ConveyorUpgradeFactory.FACTORIES.forEach(conveyorUpgradeFactory -> conveyorUpgradeFactory.getTextures().forEach(pre::addSprite));
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void transporterBake(ModelBakeEvent event) {
         for (ResourceLocation resourceLocation : event.getModelRegistry().keySet()) {
             if (resourceLocation.getNamespace().equals(Reference.MOD_ID)) {
@@ -177,23 +179,23 @@ public class ModuleTransportStorage implements IModule {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void transporterTextureStitch(TextureStitchEvent.Pre pre) {
         if (pre.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS))
             TransporterTypeFactory.FACTORIES.forEach(transporterTypeFactory -> transporterTypeFactory.getTextures().forEach(pre::addSprite));
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void onClientSetupConveyor(FMLClientSetupEvent event) {
         MenuScreens.register(ContainerConveyor.TYPE, GuiConveyor::new);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void onClientSetupTransporter(FMLClientSetupEvent event) {
         MenuScreens.register(ContainerTransporter.TYPE, GuiTransporter::new);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void onClient(){
         EventManager.mod(FMLClientSetupEvent.class).process(this::onClientSetupConveyor).subscribe();
         EventManager.mod(ModelBakeEvent.class).process(this::conveyorBake).subscribe();

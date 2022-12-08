@@ -30,12 +30,11 @@ import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.component.progress.ProgressBarComponent;
 
+import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.state.BlockState;
-
-import net.minecraftforge.common.ForgeHooks;
 
 import javax.annotation.Nonnull;
 
@@ -50,7 +49,7 @@ public class PitifulGeneratorTile extends IndustrialGeneratorTile<PitifulGenerat
         super(ModuleGenerator.PITIFUL_GENERATOR, blockPos, blockState);
         this.addInventory(fuel = (SidedInventoryComponent<PitifulGeneratorTile>) new SidedInventoryComponent<PitifulGeneratorTile>("fuel_input", 46, 22, 1, 0)
                 .setColor(DyeColor.ORANGE)
-                .setInputFilter((itemStack, integer) -> ForgeHooks.getBurnTime(itemStack, RecipeType.SMELTING) != 0)
+                .setInputFilter((itemStack, integer) -> FuelRegistry.INSTANCE.get(itemStack.getItem()) != 0)
                 .setComponentHarness(this)
         );
         this.getPowerPerTick = PitifulGeneratorConfig.powerPerTick;
@@ -58,14 +57,14 @@ public class PitifulGeneratorTile extends IndustrialGeneratorTile<PitifulGenerat
 
     @Override
     public int consumeFuel() {
-        int time = ForgeHooks.getBurnTime(fuel.getStackInSlot(0), RecipeType.SMELTING);
+        int time = FuelRegistry.INSTANCE.get(fuel.getStackInSlot(0).getItem());
         fuel.getStackInSlot(0).shrink(1);
         return time;
     }
 
     @Override
     public boolean canStart() {
-        return !fuel.getStackInSlot(0).isEmpty() && ForgeHooks.getBurnTime(fuel.getStackInSlot(0), RecipeType.SMELTING) != 0;
+        return !fuel.getStackInSlot(0).isEmpty() && FuelRegistry.INSTANCE.get(fuel.getStackInSlot(0).getItem()) != 0;
 }
 
     @Override
