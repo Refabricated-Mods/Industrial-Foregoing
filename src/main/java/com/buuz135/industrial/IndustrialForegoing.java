@@ -44,6 +44,7 @@ import com.hrznstudio.titanium.network.locator.PlayerInventoryFinder;
 import com.hrznstudio.titanium.reward.Reward;
 import com.hrznstudio.titanium.reward.RewardGiver;
 import com.hrznstudio.titanium.reward.RewardManager;
+import io.github.tropheusj.milk.Milk;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
@@ -180,6 +181,7 @@ public class IndustrialForegoing extends ModuleController {
     @Override
     protected void initModules() {
         INSTANCE = this;
+        Milk.enableMilkFluid();
         new ModuleCore().generateFeatures(getRegistries());
         new ModuleTool().generateFeatures(getRegistries());
         new ModuleTransportStorage().generateFeatures(getRegistries());
