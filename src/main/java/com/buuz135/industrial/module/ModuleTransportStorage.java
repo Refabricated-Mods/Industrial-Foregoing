@@ -42,9 +42,11 @@ import com.buuz135.industrial.utils.Reference;
 import com.google.common.collect.ImmutableMap;
 import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.module.DeferredRegistryHelper;
+import com.hrznstudio.titanium.module.RegistryHelper;
 import com.hrznstudio.titanium.tab.AdvancedTitaniumTab;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.resources.model.BakedModel;
@@ -84,38 +86,38 @@ public class ModuleTransportStorage implements IModule {
     public static ConveyorUpgradeFactory upgrade_blinking = new ConveyorBlinkingUpgrade.Factory();
     public static ConveyorUpgradeFactory upgrade_splitting = new ConveyorSplittingUpgrade.Factory();
 
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> CONVEYOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("conveyor", () -> new ConveyorBlock(TAB_TRANSPORT));
+    public static Pair<Block, BlockEntityType<?>> CONVEYOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("conveyor", () -> new ConveyorBlock(TAB_TRANSPORT));
     public static HashMap<ResourceLocation, BakedModel> CONVEYOR_UPGRADES_CACHE = new HashMap<>();
 
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLACK_HOLE_UNIT_COMMON = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(Rarity.COMMON.name().toLowerCase() + "_black_hole_unit", () -> new BlackHoleUnitBlock(Rarity.COMMON), blockRegistryObject -> () -> new BlackHoleUnitBlock.BlackHoleUnitItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), Rarity.COMMON));
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLACK_HOLE_UNIT_PITY = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.PITY_RARITY.name().toLowerCase() + "_black_hole_unit", () -> new BlackHoleUnitBlock(ModuleCore.PITY_RARITY), blockRegistryObject -> () -> new BlackHoleUnitBlock.BlackHoleUnitItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.PITY_RARITY));
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLACK_HOLE_UNIT_SIMPLE = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.SIMPLE_RARITY.name().toLowerCase() + "_black_hole_unit", () -> new BlackHoleUnitBlock(ModuleCore.SIMPLE_RARITY), blockRegistryObject -> () -> new BlackHoleUnitBlock.BlackHoleUnitItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.SIMPLE_RARITY));
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLACK_HOLE_UNIT_ADVANCED = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.ADVANCED_RARITY.name().toLowerCase() + "_black_hole_unit", () -> new BlackHoleUnitBlock(ModuleCore.ADVANCED_RARITY), blockRegistryObject -> () -> new BlackHoleUnitBlock.BlackHoleUnitItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.ADVANCED_RARITY));
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLACK_HOLE_UNIT_SUPREME = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.SUPREME_RARITY.name().toLowerCase() + "_black_hole_unit", () -> new BlackHoleUnitBlock(ModuleCore.SUPREME_RARITY), blockRegistryObject -> () -> new BlackHoleUnitBlock.BlackHoleUnitItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.SUPREME_RARITY));
+    public static Pair<Block, BlockEntityType<?>> BLACK_HOLE_UNIT_COMMON = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(Rarity.COMMON.name().toLowerCase() + "_black_hole_unit", () -> new BlackHoleUnitBlock(Rarity.COMMON), blockRegistryObject -> () -> new BlackHoleUnitBlock.BlackHoleUnitItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), Rarity.COMMON));
+    public static Pair<Block, BlockEntityType<?>> BLACK_HOLE_UNIT_PITY = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.PITY_RARITY.name().toLowerCase() + "_black_hole_unit", () -> new BlackHoleUnitBlock(ModuleCore.PITY_RARITY), blockRegistryObject -> () -> new BlackHoleUnitBlock.BlackHoleUnitItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.PITY_RARITY));
+    public static Pair<Block, BlockEntityType<?>> BLACK_HOLE_UNIT_SIMPLE = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.SIMPLE_RARITY.name().toLowerCase() + "_black_hole_unit", () -> new BlackHoleUnitBlock(ModuleCore.SIMPLE_RARITY), blockRegistryObject -> () -> new BlackHoleUnitBlock.BlackHoleUnitItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.SIMPLE_RARITY));
+    public static Pair<Block, BlockEntityType<?>> BLACK_HOLE_UNIT_ADVANCED = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.ADVANCED_RARITY.name().toLowerCase() + "_black_hole_unit", () -> new BlackHoleUnitBlock(ModuleCore.ADVANCED_RARITY), blockRegistryObject -> () -> new BlackHoleUnitBlock.BlackHoleUnitItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.ADVANCED_RARITY));
+    public static Pair<Block, BlockEntityType<?>> BLACK_HOLE_UNIT_SUPREME = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.SUPREME_RARITY.name().toLowerCase() + "_black_hole_unit", () -> new BlackHoleUnitBlock(ModuleCore.SUPREME_RARITY), blockRegistryObject -> () -> new BlackHoleUnitBlock.BlackHoleUnitItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.SUPREME_RARITY));
 
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLACK_HOLE_TANK_COMMON = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(Rarity.COMMON.name().toLowerCase() + "_black_hole_tank", () -> new BlackHoleTankBlock(Rarity.COMMON), blockRegistryObject -> () -> new BlackHoleTankBlock.BlackHoleTankItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT),  Rarity.COMMON));
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLACK_HOLE_TANK_PITY = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.PITY_RARITY.name().toLowerCase() + "_black_hole_tank", () -> new BlackHoleTankBlock(ModuleCore.PITY_RARITY), blockRegistryObject -> () -> new BlackHoleTankBlock.BlackHoleTankItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.PITY_RARITY));
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLACK_HOLE_TANK_SIMPLE = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.SIMPLE_RARITY.name().toLowerCase() + "_black_hole_tank", () -> new BlackHoleTankBlock(ModuleCore.SIMPLE_RARITY), blockRegistryObject -> () -> new BlackHoleTankBlock.BlackHoleTankItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.SIMPLE_RARITY));
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLACK_HOLE_TANK_ADVANCED = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.ADVANCED_RARITY.name().toLowerCase() + "_black_hole_tank", () -> new BlackHoleTankBlock(ModuleCore.ADVANCED_RARITY), blockRegistryObject -> () -> new BlackHoleTankBlock.BlackHoleTankItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.ADVANCED_RARITY));
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLACK_HOLE_TANK_SUPREME = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.SUPREME_RARITY.name().toLowerCase() + "_black_hole_tank", () -> new BlackHoleTankBlock(ModuleCore.SUPREME_RARITY), blockRegistryObject -> () -> new BlackHoleTankBlock.BlackHoleTankItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.SUPREME_RARITY));
+    public static Pair<Block, BlockEntityType<?>> BLACK_HOLE_TANK_COMMON = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(Rarity.COMMON.name().toLowerCase() + "_black_hole_tank", () -> new BlackHoleTankBlock(Rarity.COMMON), blockRegistryObject -> () -> new BlackHoleTankBlock.BlackHoleTankItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT),  Rarity.COMMON));
+    public static Pair<Block, BlockEntityType<?>> BLACK_HOLE_TANK_PITY = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.PITY_RARITY.name().toLowerCase() + "_black_hole_tank", () -> new BlackHoleTankBlock(ModuleCore.PITY_RARITY), blockRegistryObject -> () -> new BlackHoleTankBlock.BlackHoleTankItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.PITY_RARITY));
+    public static Pair<Block, BlockEntityType<?>> BLACK_HOLE_TANK_SIMPLE = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.SIMPLE_RARITY.name().toLowerCase() + "_black_hole_tank", () -> new BlackHoleTankBlock(ModuleCore.SIMPLE_RARITY), blockRegistryObject -> () -> new BlackHoleTankBlock.BlackHoleTankItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.SIMPLE_RARITY));
+    public static Pair<Block, BlockEntityType<?>> BLACK_HOLE_TANK_ADVANCED = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.ADVANCED_RARITY.name().toLowerCase() + "_black_hole_tank", () -> new BlackHoleTankBlock(ModuleCore.ADVANCED_RARITY), blockRegistryObject -> () -> new BlackHoleTankBlock.BlackHoleTankItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.ADVANCED_RARITY));
+    public static Pair<Block, BlockEntityType<?>> BLACK_HOLE_TANK_SUPREME = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTileItem(ModuleCore.SUPREME_RARITY.name().toLowerCase() + "_black_hole_tank", () -> new BlackHoleTankBlock(ModuleCore.SUPREME_RARITY), blockRegistryObject -> () -> new BlackHoleTankBlock.BlackHoleTankItem(blockRegistryObject.get(), new Item.Properties().tab(TAB_TRANSPORT), ModuleCore.SUPREME_RARITY));
 
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLACK_HOLE_CONTROLLER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("black_hole_controller", () -> new BlackHoleControllerBlock());
+    public static Pair<Block, BlockEntityType<?>> BLACK_HOLE_CONTROLLER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("black_hole_controller", () -> new BlackHoleControllerBlock());
 
 
     public static TransporterTypeFactory ITEM_TRANSPORTER = new TransporterItemType.Factory();
     public static TransporterTypeFactory FLUID_TRANSPORTER = new TransporterFluidType.Factory();
     public static TransporterTypeFactory WORLD_TRANSPORTER = new TransporterWorldType.Factory();
 
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> TRANSPORTER =  IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("transporter", () -> new TransporterBlock(TAB_TRANSPORT));
+    public static Pair<Block, BlockEntityType<?>> TRANSPORTER =  IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("transporter", () -> new TransporterBlock(TAB_TRANSPORT));
     public static HashMap<ResourceLocation, BakedModel> TRANSPORTER_CACHE = new HashMap<>();
 
     @Override
-    public void generateFeatures(DeferredRegistryHelper registryHelper) {
+    public void generateFeatures(RegistryHelper registryHelper) {
         TAB_TRANSPORT.addIconStack(() -> new ItemStack(CONVEYOR.getLeft().orElse(Blocks.STONE)));
-        registryHelper.registerGeneric(MenuType.class, "conveyor", () ->  (MenuType) IForgeMenuType.create(ContainerConveyor::new));
-        ConveyorUpgradeFactory.FACTORIES.forEach(conveyorUpgradeFactory -> registryHelper.registerGeneric(Item.class,"conveyor_" + conveyorUpgradeFactory.getRegistryName().getPath() + "_upgrade", () -> new ItemConveyorUpgrade(conveyorUpgradeFactory, TAB_TRANSPORT)));
-        registryHelper.registerGeneric(MenuType.class, "transporter", () -> (MenuType) IForgeMenuType.create(ContainerTransporter::new));
-        TransporterTypeFactory.FACTORIES.forEach(transporterTypeFactory -> registryHelper.registerGeneric(Item.class, transporterTypeFactory.getRegistryName().getPath() + "_transporter_type", () ->  new ItemTransporterType(transporterTypeFactory, TAB_TRANSPORT)));
+        registryHelper.registerGeneric(Registry.MENU, "conveyor", () ->  (MenuType) IForgeMenuType.create(ContainerConveyor::new));
+        ConveyorUpgradeFactory.FACTORIES.forEach(conveyorUpgradeFactory -> registryHelper.registerGeneric(Registry.ITEM,"conveyor_" + conveyorUpgradeFactory.getName() + "_upgrade", () -> new ItemConveyorUpgrade(conveyorUpgradeFactory, TAB_TRANSPORT)));
+        registryHelper.registerGeneric(Registry.MENU, "transporter", () -> (MenuType) IForgeMenuType.create(ContainerTransporter::new));
+        TransporterTypeFactory.FACTORIES.forEach(transporterTypeFactory -> registryHelper.registerGeneric(Registry.ITEM, transporterTypeFactory.getName() + "_transporter_type", () ->  new ItemTransporterType(transporterTypeFactory, TAB_TRANSPORT)));
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> this::onClient);
 
     }

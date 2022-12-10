@@ -59,12 +59,13 @@ public class BlockPlacerTile extends IndustrialAreaWorkingTile<BlockPlacerTile> 
 
     @Override
     public WorkAction work() {
-        if (hasEnergy(getPowerPerOperation) && BlockUtils.canBlockBeBroken(this.level, this.worldPosition)) {
+        IFFakePlayer fakePlayer = (IFFakePlayer) IndustrialForegoing.getFakePlayer(level, "block_placer");
+        if (hasEnergy(getPowerPerOperation) && BlockUtils.canBlockBeBroken(this.level, this.worldPosition, fakePlayer)) {
             BlockPos pointed = getPointedBlockPos();
             if (isLoaded(pointed) && level.isEmptyBlock(pointed)) {
                 for (int i = 0; i < input.getSlots(); i++) {
                     if (!input.getStackInSlot(i).isEmpty() && input.getStackInSlot(i).getItem() instanceof BlockItem) {
-                        IFFakePlayer fakePlayer = (IFFakePlayer) IndustrialForegoing.getFakePlayer(level, pointed);
+                        fakePlayer = (IFFakePlayer) IndustrialForegoing.getFakePlayer(level, pointed, "block_placer");
                         if (fakePlayer.placeBlock(this.level, pointed, input.getStackInSlot(i))) {
                             increasePointer();
                             return new WorkAction(1, getPowerPerOperation);

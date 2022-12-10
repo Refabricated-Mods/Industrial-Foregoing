@@ -161,7 +161,7 @@ public class LaserDrillOreRecipe extends SerializableRecipe {
     }
 
     public LaserDrillOreRecipe(String name,Ingredient output, int color, ResourceLocation isTag, LaserDrillRarity... rarity) {
-        this(name, output, Ingredient.of(ModuleCore.LASER_LENS[color].get()),isTag, rarity);
+        this(name, output, Ingredient.of(ModuleCore.LASER_LENS[color]),isTag, rarity);
     }
 
     public LaserDrillOreRecipe(ResourceLocation resourceLocation) {

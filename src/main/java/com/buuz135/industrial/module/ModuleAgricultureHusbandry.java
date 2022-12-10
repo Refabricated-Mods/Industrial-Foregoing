@@ -23,18 +23,15 @@
 package com.buuz135.industrial.module;
 
 import com.buuz135.industrial.IndustrialForegoing;
-import com.buuz135.industrial.api.plant.PlantRecollectable;
 import com.buuz135.industrial.block.agriculturehusbandry.*;
+import com.buuz135.industrial.registry.IFRegistries;
 import com.buuz135.industrial.utils.Reference;
 import com.buuz135.industrial.utils.apihandlers.plant.*;
-import com.hrznstudio.titanium.module.DeferredRegistryHelper;
 import com.hrznstudio.titanium.module.RegistryHelper;
 import com.hrznstudio.titanium.tab.AdvancedTitaniumTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class ModuleAgricultureHusbandry implements IModule {
@@ -58,15 +55,15 @@ public class ModuleAgricultureHusbandry implements IModule {
     @Override
     public void generateFeatures(RegistryHelper registryHelper) {
 
-        registryHelper.registerGeneric(ModuleCore.PLANT_RECOLLECTABLE,"blockcropplant", BlockCropPlantRecollectable::new);
-        registryHelper.registerGeneric(ModuleCore.PLANT_RECOLLECTABLE,"blocknetherwart", BlockNetherWartRecollectable::new);
-        registryHelper.registerGeneric(ModuleCore.PLANT_RECOLLECTABLE,"blocksugarandcactus", DoubleTallPlantRecollectable::new);
-        registryHelper.registerGeneric(ModuleCore.PLANT_RECOLLECTABLE,"blockpumpkingandmelon", PumpkinMelonPlantRecollectable::new);
-        registryHelper.registerGeneric(ModuleCore.PLANT_RECOLLECTABLE,"tree", TreePlantRecollectable::new);
-        registryHelper.registerGeneric(ModuleCore.PLANT_RECOLLECTABLE,"chorus_fruit", ChorusFruitRecollectable::new);
-        registryHelper.registerGeneric(ModuleCore.PLANT_RECOLLECTABLE,"bamboo", BambooPlantRecollectable::new);
-        registryHelper.registerGeneric(ModuleCore.PLANT_RECOLLECTABLE,"kelp", KelpPlantRecollectable::new);
-        registryHelper.registerGeneric(ModuleCore.PLANT_RECOLLECTABLE,"sweetberries", SweetBerriesPlantRecollectable::new);
+        registryHelper.registerGeneric(IFRegistries.PLANT_RECOLLECTABLE,"blockcropplant", BlockCropPlantRecollectable::new);
+        registryHelper.registerGeneric(IFRegistries.PLANT_RECOLLECTABLE,"blocknetherwart", BlockNetherWartRecollectable::new);
+        registryHelper.registerGeneric(IFRegistries.PLANT_RECOLLECTABLE,"blocksugarandcactus", DoubleTallPlantRecollectable::new);
+        registryHelper.registerGeneric(IFRegistries.PLANT_RECOLLECTABLE,"blockpumpkingandmelon", PumpkinMelonPlantRecollectable::new);
+        registryHelper.registerGeneric(IFRegistries.PLANT_RECOLLECTABLE,"tree", TreePlantRecollectable::new);
+        registryHelper.registerGeneric(IFRegistries.PLANT_RECOLLECTABLE,"chorus_fruit", ChorusFruitRecollectable::new);
+        registryHelper.registerGeneric(IFRegistries.PLANT_RECOLLECTABLE,"bamboo", BambooPlantRecollectable::new);
+        registryHelper.registerGeneric(IFRegistries.PLANT_RECOLLECTABLE,"kelp", KelpPlantRecollectable::new);
+        registryHelper.registerGeneric(IFRegistries.PLANT_RECOLLECTABLE,"sweetberries", SweetBerriesPlantRecollectable::new);
         TAB_AG_HUS.addIconStack(() -> new ItemStack(PLANT_SOWER.getLeft()));
     }
 }

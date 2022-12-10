@@ -25,14 +25,17 @@ import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.hrznstudio.titanium.recipe.serializer.GenericSerializer;
 import com.hrznstudio.titanium.recipe.serializer.SerializableRecipe;
+import io.github.fabricators_of_create.porting_lib.transfer.fluid.FluidTank;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraft.world.level.material.Fluids;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,21 +46,21 @@ public class StoneWorkGenerateRecipe extends SerializableRecipe {
     public static List<StoneWorkGenerateRecipe> RECIPES = new ArrayList<>();
 
     static {
-        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "cobblestone"),new ItemStack(Blocks.COBBLESTONE), 1000, 1000, 0, 0);
-        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "netherrack"),new ItemStack(Blocks.NETHERRACK), 250, 400, 250, 200);
-        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "obsidian"),new ItemStack(Blocks.OBSIDIAN), 1000, 1000, 0, 1000);
-        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "granite"),new ItemStack(Blocks.GRANITE), 200, 200, 200, 200);
-        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "diorite"),new ItemStack(Blocks.DIORITE), 200, 250, 200, 250);
-        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "andesite"),new ItemStack(Blocks.ANDESITE), 300, 300, 300, 300);
+        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "cobblestone"),new ItemStack(Blocks.COBBLESTONE), FluidConstants.BLOCK, FluidConstants.BLOCK, 0, 0);
+        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "netherrack"),new ItemStack(Blocks.NETHERRACK), 250 * 81, 400 * 81, 250 * 81, 200 * 81);
+        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "obsidian"),new ItemStack(Blocks.OBSIDIAN), FluidConstants.BLOCK, FluidConstants.BLOCK, 0, FluidConstants.BLOCK);
+        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "granite"),new ItemStack(Blocks.GRANITE), 200 * 81, 200 * 81, 200 * 81, 200 * 81);
+        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "diorite"),new ItemStack(Blocks.DIORITE), 200 * 81, 250 * 81, 200 * 81, 250 * 81);
+        new StoneWorkGenerateRecipe(new ResourceLocation(Reference.MOD_ID, "andesite"),new ItemStack(Blocks.ANDESITE), 300 * 81, 300 * 81, 300 * 81, 300 * 81);
     }
 
     public ItemStack output;
-    public int waterNeed;
-    public int lavaNeed;
-    public int waterConsume;
-    public int lavaConsume;
+    public long waterNeed;
+    public long lavaNeed;
+    public long waterConsume;
+    public long lavaConsume;
 
-    public StoneWorkGenerateRecipe(ResourceLocation resourceLocation, ItemStack output, int waterNeed, int lavaNeed, int waterConsume, int lavaConsume) {
+    public StoneWorkGenerateRecipe(ResourceLocation resourceLocation, ItemStack output, long waterNeed, long lavaNeed, long waterConsume, long lavaConsume) {
         super(resourceLocation);
         this.output = output;
         this.waterNeed = waterNeed;
@@ -106,8 +109,10 @@ public class StoneWorkGenerateRecipe extends SerializableRecipe {
     }
 
     public void consume(FluidTankComponent fluidTank, FluidTankComponent fluidTank2){
-        fluidTank.drainForced(waterConsume, IFluidHandler.FluidAction.EXECUTE);
-        fluidTank2.drainForced(lavaConsume, IFluidHandler.FluidAction.EXECUTE);
+        Transaction transaction = Transaction.openOuter();
+        fluidTank.extract(FluidVariant.of(Fluids.WATER), waterConsume, transaction);
+        fluidTank2.extract(FluidVariant.of(Fluids.LAVA), lavaConsume, transaction);
+        transaction.commit();
     }
 
 }

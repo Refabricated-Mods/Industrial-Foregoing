@@ -36,7 +36,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class LavaStrawHandler extends StrawHandlerBase {
     public LavaStrawHandler() {
         super(() -> Fluids.LAVA);
-        setRegistryName("lava");
     }
 
     @Override

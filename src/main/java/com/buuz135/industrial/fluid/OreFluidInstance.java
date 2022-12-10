@@ -22,8 +22,9 @@
 
 package com.buuz135.industrial.fluid;
 
-import com.buuz135.industrial.item.OreBucketItem;
-import com.hrznstudio.titanium.module.DeferredRegistryHelper;
+import com.hrznstudio.titanium.module.RegistryHelper;
+import io.github.fabricators_of_create.porting_lib.util.FluidAttributes;
+import net.minecraft.core.Registry;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -33,39 +34,37 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.fluids.FluidAttributes;
-import net.minecraftforge.registries.RegistryObject;
 
-public class OreFluidInstance extends net.minecraftforge.registries.ForgeRegistryEntry<OreFluidInstance> {
+public class OreFluidInstance {
 
-    private RegistryObject<Fluid> flowingFluid;
-    private RegistryObject<Fluid> sourceFluid;
-    private RegistryObject<Item> bucketFluid;
-    private RegistryObject<Block> blockFluid;
+    private Fluid flowingFluid;
+    private Fluid sourceFluid;
+    private Item bucketFluid;
+    private Block blockFluid;
     private String fluid;
 
-    public OreFluidInstance(DeferredRegistryHelper helper, String fluid, FluidAttributes.Builder attributes, CreativeModeTab group) {
+    public OreFluidInstance(RegistryHelper helper, String fluid, FluidAttributes.Builder attributes, CreativeModeTab group) {
         this.fluid = fluid;
-        this.sourceFluid = helper.registerGeneric(Fluid.class, fluid, () -> new OreFluid.Source(attributes, this));
-        this.flowingFluid = helper.registerGeneric(Fluid.class, fluid + "_flowing", () ->  new OreFluid.Flowing(attributes, this));
-        this.bucketFluid = helper.registerGeneric(Item.class, fluid + "_bucket", () -> new BucketItem(this.sourceFluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(group)));
-        this.blockFluid = helper.registerGeneric(Block.class, fluid, () -> new LiquidBlock(() -> (FlowingFluid) sourceFluid.get(), Block.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops()));
+        this.sourceFluid = helper.registerGeneric(Registry.FLUID, fluid, () -> new OreFluid.Source(attributes, this));
+        this.flowingFluid = helper.registerGeneric(Registry.FLUID, fluid + "_flowing", () ->  new OreFluid.Flowing(attributes, this));
+        this.bucketFluid = helper.registerGeneric(Registry.ITEM, fluid + "_bucket", () -> new BucketItem(this.sourceFluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(group)));
+        this.blockFluid = helper.registerGeneric(Registry.BLOCK, fluid, () -> new LiquidBlock((FlowingFluid) sourceFluid, Block.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops()));
     }
 
     public Fluid getFlowingFluid() {
-        return flowingFluid.get();
+        return flowingFluid;
     }
 
     public Fluid getSourceFluid() {
-        return sourceFluid.get();
+        return sourceFluid;
     }
 
     public Item getBucketFluid() {
-        return bucketFluid.get();
+        return bucketFluid;
     }
 
     public Block getBlockFluid() {
-        return blockFluid.get();
+        return blockFluid;
     }
 
     public String getFluid() {

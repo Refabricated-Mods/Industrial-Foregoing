@@ -169,7 +169,7 @@ public class HydroponicBedTile extends IndustrialWorkingTile<HydroponicBedTile> 
     }
 
     public static boolean tryToHarvestAndReplant(Level level, BlockPos up, BlockState state, IItemHandler output, ProgressBarComponent<?> etherBuffer, IndustrialWorkingTile tile){
-        Optional<PlantRecollectable> optional = IFRegistries.PLANT_RECOLLECTABLES_REGISTRY.get().getValues().stream().filter(plantRecollectable -> plantRecollectable.canBeHarvested(level, up, state)).findFirst();
+        Optional<PlantRecollectable> optional = IFRegistries.PLANT_RECOLLECTABLE.stream().filter(plantRecollectable -> plantRecollectable.canBeHarvested(level, up, state)).findFirst();
         if (optional.isPresent()) {
             List<ItemStack> drops = optional.get().doHarvestOperation(level, up, state);
             if (level.isEmptyBlock(up)){

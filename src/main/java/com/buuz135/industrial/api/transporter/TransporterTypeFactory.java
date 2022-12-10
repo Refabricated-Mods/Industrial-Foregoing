@@ -39,6 +39,7 @@ import java.util.Set;
 
 public abstract class TransporterTypeFactory implements IRecipeProvider {
 
+    final String name;
     public static final ImmutableSet<Direction> ALL = ImmutableSet.copyOf(Direction.values());
     public static final ImmutableSet<Direction> HORIZONTAL = ImmutableSet.copyOf(Direction.Plane.HORIZONTAL.iterator());
     public static final ImmutableSet<Direction> DOWN = ImmutableSet.of(Direction.DOWN);
@@ -46,8 +47,13 @@ public abstract class TransporterTypeFactory implements IRecipeProvider {
 
     private Item upgradeItem;
 
-    public TransporterTypeFactory() {
+    public TransporterTypeFactory(String name) {
         FACTORIES.add(this);
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public abstract TransporterType create(IBlockContainer container, Direction face, TransporterAction action);

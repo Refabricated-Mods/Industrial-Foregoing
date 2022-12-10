@@ -23,10 +23,11 @@ package com.buuz135.industrial.entity;
 
 import com.buuz135.industrial.item.infinity.item.ItemInfinityNuke;
 import com.buuz135.industrial.module.ModuleTool;
-import com.buuz135.industrial.proxy.client.ClientProxy;
 import com.buuz135.industrial.proxy.client.sound.TickeableSound;
 import com.buuz135.industrial.utils.explosion.ExplosionTickHandler;
 import com.buuz135.industrial.utils.explosion.ProcessExplosion;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -48,8 +49,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -132,7 +131,7 @@ public class InfinityNukeEntity extends Entity {
             chargingSound.setDistance(getRadius());
             chargingSound.increase();
             if (!Minecraft.getInstance().getSoundManager().isActive(chargingSound) && explodingSound == null) {
-                explodingSound = new TickeableSound(this.level, this.blockPosition(), ClientProxy.NUKE_EXPLOSION, getRadius(), 10);
+                explodingSound = new TickeableSound(this.level, this.blockPosition(), ModuleTool.NUKE_EXPLOSION, getRadius(), 10);
                 explodingSound.setPitch(1);
                 Minecraft.getInstance().getSoundManager().play(explodingSound);
             }
@@ -207,7 +206,7 @@ public class InfinityNukeEntity extends Entity {
 
     @Environment(EnvType.CLIENT)
     private void arm() {
-        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(ClientProxy.NUKE_ARMING, SoundSource.BLOCKS, 1, 1, this.blockPosition()));
+        Minecraft.getInstance().getSoundManager().play(new SimpleSoundInstance(ModuleTool.NUKE_ARMING, SoundSource.BLOCKS, 1, 1, this.blockPosition()));
     }
 
     @Override

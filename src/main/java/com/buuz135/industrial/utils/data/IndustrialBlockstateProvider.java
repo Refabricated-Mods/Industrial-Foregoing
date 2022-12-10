@@ -25,6 +25,7 @@ package com.buuz135.industrial.utils.data;
 import com.buuz135.industrial.block.IndustrialBlock;
 import com.buuz135.industrial.module.ModuleAgricultureHusbandry;
 import com.buuz135.industrial.module.ModuleTransportStorage;
+import com.hrznstudio.titanium.util.NonNullLazy;
 import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +36,6 @@ import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.util.NonNullLazy;
 
 import java.util.List;
 
@@ -72,7 +72,7 @@ public class IndustrialBlockstateProvider extends BlockStateProvider {
                         builder.partialState().addModels(new ConfiguredModel(new ModelFile.UncheckedModelFile(getModel(industrialBlock))));
                     }
                 });
-        simpleBlock(ModuleTransportStorage.TRANSPORTER.getLeft().get(), new ModelFile.UncheckedModelFile(modLoc("block/" + ModuleTransportStorage.TRANSPORTER.getLeft().get().getRegistryName().getPath())));
+        simpleBlock(ModuleTransportStorage.TRANSPORTER.getLeft(), new ModelFile.UncheckedModelFile(modLoc("block/" + ModuleTransportStorage.TRANSPORTER.getLeft().get().getRegistryName().getPath())));
         //VariantBlockStateBuilder conveyor = getVariantBuilder(ModuleTransport.CONVEYOR);
         //for (ConveyorBlock.EnumType type : ConveyorBlock.TYPE.getAllowedValues()) {
         //    for (Direction direction : ConveyorBlock.FACING.getAllowedValues()) {

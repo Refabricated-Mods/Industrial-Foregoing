@@ -27,16 +27,9 @@ import com.buuz135.industrial.proxy.client.ClientProxy;
 import com.buuz135.industrial.proxy.client.render.TransporterTESR;
 import com.buuz135.industrial.proxy.network.*;
 import com.buuz135.industrial.recipe.*;
-import com.buuz135.industrial.recipe.provider.IndustrialRecipeProvider;
-import com.buuz135.industrial.recipe.provider.IndustrialSerializableProvider;
-import com.buuz135.industrial.recipe.provider.IndustrialTagsProvider;
 import com.buuz135.industrial.registry.IFRegistries;
 import com.buuz135.industrial.utils.IFFakePlayer;
 import com.buuz135.industrial.utils.Reference;
-import com.buuz135.industrial.utils.data.IndustrialBlockstateProvider;
-import com.buuz135.industrial.utils.data.IndustrialModelProvider;
-import com.hrznstudio.titanium.datagenerator.loot.TitaniumLootTableProvider;
-import com.hrznstudio.titanium.datagenerator.model.BlockItemModelGeneratorProvider;
 import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.module.ModuleController;
 import com.hrznstudio.titanium.network.NetworkHandler;
@@ -44,19 +37,17 @@ import com.hrznstudio.titanium.network.locator.PlayerInventoryFinder;
 import com.hrznstudio.titanium.reward.Reward;
 import com.hrznstudio.titanium.reward.RewardGiver;
 import com.hrznstudio.titanium.reward.RewardManager;
+import dev.cafeteria.fakeplayerapi.server.FakePlayerBuilder;
+import dev.cafeteria.fakeplayerapi.server.FakeServerPlayer;
 import io.github.tropheusj.milk.Milk;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -81,42 +72,25 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
-@Mod(Reference.MOD_ID)
 public class IndustrialForegoing extends ModuleController {
 
     private static CommonProxy proxy;
-    private static HashMap<DimensionType, IFFakePlayer> worldFakePlayer = new HashMap<>();
+    private static final Map<ServerLevel, Map<String, FakeServerPlayer>> FAKE_PLAYER_MAP = new HashMap<>();
+    private static final FakePlayerBuilder FAKE_PLAYER_BUILDER = new FakePlayerBuilder(new ResourceLocation(Reference.MOD_ID, "fake_player"), (IFFakePlayer::new));
     public static NetworkHandler NETWORK = new NetworkHandler(Reference.MOD_ID);
     public static Logger LOGGER = LogManager.getLogger(Reference.MOD_ID);
     public static IndustrialForegoing INSTANCE;
 
-    static {
-        NETWORK.registerMessage(ConveyorButtonInteractMessage.class);
-        NETWORK.registerMessage(ConveyorSplittingSyncEntityMessage.class);
-        NETWORK.registerMessage(SpecialParticleMessage.class);
-        NETWORK.registerMessage(BackpackSyncMessage.class);
-        NETWORK.registerMessage(BackpackOpenMessage.class);
-        NETWORK.registerMessage(BackpackOpenedMessage.class);
-        NETWORK.registerMessage(TransporterSyncMessage.class);
-        NETWORK.registerMessage(TransporterButtonInteractMessage.class);
-        NETWORK.registerMessage(PlungerPlayerHitMessage.class);
-    }
-
     public IndustrialForegoing() {
+        super(Reference.MOD_ID);
         proxy = new CommonProxy();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> EventManager.mod(FMLClientSetupEvent.class).process(fmlClientSetupEvent -> new ClientProxy().run()).subscribe());
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> EventManager.mod(ModelRegistryEvent.class).process(modelRegistryEvent -> ForgeModelBakery.addSpecialModel(new ResourceLocation(Reference.MOD_ID, "block/catears"))).subscribe());
         EventManager.mod(FMLCommonSetupEvent.class).process(fmlCommonSetupEvent -> proxy.run()).subscribe();
         EventManager.forge(ServerStartingEvent.class).process(fmlServerStartingEvent -> worldFakePlayer.clear()).subscribe();
-        EventManager.mod(NewRegistryEvent.class).process(IFRegistries::create).subscribe();
-        EventManager.modGeneric(RegistryEvent.Register.class, RecipeSerializer.class)
-                .process(register -> ((RegistryEvent.Register) register).getRegistry().registerAll(FluidExtractorRecipe.SERIALIZER, DissolutionChamberRecipe.SERIALIZER, LaserDrillOreRecipe.SERIALIZER, LaserDrillFluidRecipe.SERIALIZER, StoneWorkGenerateRecipe.SERIALIZER, CrusherRecipe.SERIALIZER)).subscribe();
+
         /*
         EventManager.forge(ItemTooltipEvent.class).process(itemTooltipEvent -> ForgeRegistries.ITEMS.tags().getReverseTag(itemTooltipEvent.getItemStack().getItem()).ifPresent(itemIReverseTag -> {
             itemIReverseTag.getTagKeys().forEach(itemTagKey -> itemTooltipEvent.getToolTip().add(new TextComponent(itemTagKey.location().toString())));
@@ -130,23 +104,17 @@ public class IndustrialForegoing extends ModuleController {
         }
         LaserDrillRarity.init();
         PlayerInventoryFinder.init();
-        ForgeMod.enableMilkFluid();
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> this::initClient);
     }
 
-    public static FakePlayer getFakePlayer(Level world) {
-        if (worldFakePlayer.containsKey(world.dimensionType()))
-            return worldFakePlayer.get(world.dimensionType());
-        if (world instanceof ServerLevel) {
-            IFFakePlayer fakePlayer = new IFFakePlayer((ServerLevel) world);
-            worldFakePlayer.put(world.dimensionType(), fakePlayer);
-            return fakePlayer;
+    public static FakeServerPlayer getFakePlayer(Level world, String name) {
+        if (world instanceof ServerLevel serverLevel) {
+            return FAKE_PLAYER_MAP.computeIfAbsent(serverLevel, s->  new HashMap<>()).computeIfAbsent(name, n -> FAKE_PLAYER_BUILDER.create(world.getServer(), serverLevel, name));
         }
         return null;
     }
 
-    public static FakePlayer getFakePlayer(Level world, BlockPos pos) {
-        FakePlayer player = getFakePlayer(world);
+    public static FakeServerPlayer getFakePlayer(Level world, BlockPos pos, String name) {
+        FakeServerPlayer player = getFakePlayer(world, name);
         if (player != null) player.absMoveTo(pos.getX(), pos.getY(), pos.getZ(), 90, 90);
         return player;
     }
@@ -154,33 +122,22 @@ public class IndustrialForegoing extends ModuleController {
     @Override
     public void onPreInit() {
         super.onPreInit();
-    }
-
-    @Override
-    public void addDataProvider(GatherDataEvent event) {
-        super.addDataProvider(event);
-        NonNullLazy<List<Block>> blocksToProcess = NonNullLazy.of(() ->
-                ForgeRegistries.BLOCKS.getValues()
-                        .stream()
-                        .filter(basicBlock -> Optional.ofNullable(basicBlock.getRegistryName())
-                                .map(ResourceLocation::getNamespace)
-                                .filter(Reference.MOD_ID::equalsIgnoreCase)
-                                .isPresent())
-                        .collect(Collectors.toList())
-        );
-        event.getGenerator().addProvider(new IndustrialTagsProvider.Blocks(event.getGenerator(), Reference.MOD_ID, event.getExistingFileHelper()));
-        event.getGenerator().addProvider(new IndustrialTagsProvider.Items(event.getGenerator(), Reference.MOD_ID, event.getExistingFileHelper()));
-        event.getGenerator().addProvider(new IndustrialRecipeProvider(event.getGenerator(), blocksToProcess));
-        event.getGenerator().addProvider(new IndustrialSerializableProvider(event.getGenerator(), Reference.MOD_ID));
-        event.getGenerator().addProvider(new TitaniumLootTableProvider(event.getGenerator(), blocksToProcess));
-        event.getGenerator().addProvider(new BlockItemModelGeneratorProvider(event.getGenerator(), Reference.MOD_ID, blocksToProcess));
-        event.getGenerator().addProvider(new IndustrialBlockstateProvider(event.getGenerator(), event.getExistingFileHelper(), blocksToProcess));
-        event.getGenerator().addProvider(new IndustrialModelProvider(event.getGenerator(), event.getExistingFileHelper()));
+        NETWORK.registerMessage(ConveyorButtonInteractMessage.class);
+        NETWORK.registerMessage(ConveyorSplittingSyncEntityMessage.class);
+        NETWORK.registerMessage(SpecialParticleMessage.class);
+        NETWORK.registerMessage(BackpackSyncMessage.class);
+        NETWORK.registerMessage(BackpackOpenMessage.class);
+        NETWORK.registerMessage(BackpackOpenedMessage.class);
+        NETWORK.registerMessage(TransporterSyncMessage.class);
+        NETWORK.registerMessage(TransporterButtonInteractMessage.class);
+        NETWORK.registerMessage(PlungerPlayerHitMessage.class);
     }
 
     @Override
     protected void initModules() {
         INSTANCE = this;
+        IFRegistries.init();
+        getRegistries().registerGenericRecipeSerializers(FluidExtractorRecipe.SERIALIZER, DissolutionChamberRecipe.SERIALIZER, LaserDrillOreRecipe.SERIALIZER, LaserDrillFluidRecipe.SERIALIZER, StoneWorkGenerateRecipe.SERIALIZER, CrusherRecipe.SERIALIZER);
         Milk.enableMilkFluid();
         new ModuleCore().generateFeatures(getRegistries());
         new ModuleTool().generateFeatures(getRegistries());
@@ -201,6 +158,5 @@ public class IndustrialForegoing extends ModuleController {
         EventManager.mod(ModelBakeEvent.class).process(event -> {
             ClientProxy.ears_baked = event.getModelRegistry().get(new ResourceLocation(Reference.MOD_ID, "block/catears"));
         }).subscribe();
-        EventManager.forgeGeneric(RegistryEvent.Register.class, SoundEvent.class).process(registryEvent -> ((RegistryEvent.Register) registryEvent).getRegistry().registerAll(ClientProxy.NUKE_ARMING, ClientProxy.NUKE_EXPLOSION)).subscribe();
     }
 }

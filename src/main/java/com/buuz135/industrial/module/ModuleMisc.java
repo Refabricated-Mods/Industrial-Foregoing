@@ -27,7 +27,9 @@ import com.buuz135.industrial.block.misc.*;
 import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.module.DeferredRegistryHelper;
+import com.hrznstudio.titanium.module.RegistryHelper;
 import com.hrznstudio.titanium.tab.AdvancedTitaniumTab;
+import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -40,22 +42,26 @@ import org.apache.commons.lang3.tuple.Pair;
 public class ModuleMisc implements IModule {
 
     public static AdvancedTitaniumTab TAB_MISC = new AdvancedTitaniumTab(Reference.MOD_ID + "_misc", true);
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> STASIS_CHAMBER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("stasis_chamber", () -> new StasisChamberBlock());
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> MOB_DETECTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("mob_detector", () -> new MobDetectorBlock());
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> ENCHANTMENT_SORTER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_sorter", () -> new EnchantmentSorterBlock());
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> ENCHANTMENT_APPLICATOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_applicator", () -> new EnchantmentApplicatorBlock());
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> ENCHANTMENT_EXTRACTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_extractor", () -> new EnchantmentExtractorBlock());
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> ENCHANTMENT_FACTORY = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_factory", () -> new EnchantmentFactoryBlock());
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> INFINITY_CHARGER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("infinity_charger", () -> new InfinityChargerBlock());
+    public static Pair<Block, BlockEntityType<?>> STASIS_CHAMBER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("stasis_chamber", () -> new StasisChamberBlock());
+    public static Pair<Block, BlockEntityType<?>> MOB_DETECTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("mob_detector", () -> new MobDetectorBlock());
+    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_SORTER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_sorter", () -> new EnchantmentSorterBlock());
+    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_APPLICATOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_applicator", () -> new EnchantmentApplicatorBlock());
+    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_EXTRACTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_extractor", () -> new EnchantmentExtractorBlock());
+    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_FACTORY = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_factory", () -> new EnchantmentFactoryBlock());
+    public static Pair<Block, BlockEntityType<?>> INFINITY_CHARGER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("infinity_charger", () -> new InfinityChargerBlock());
 
     @Override
-    public void generateFeatures(DeferredRegistryHelper helper) {
-        EventManager.forge(LivingEvent.LivingUpdateEvent.class).filter(livingUpdateEvent -> livingUpdateEvent.getEntityLiving() instanceof Mob && livingUpdateEvent.getEntityLiving().getPersistentData().contains("StasisChamberTime")).process(livingUpdateEvent -> {
-            long time = livingUpdateEvent.getEntityLiving().getPersistentData().getLong("StasisChamberTime");
-            if (time + 50 <= livingUpdateEvent.getEntityLiving().level.getGameTime()) {
-                ((Mob) livingUpdateEvent.getEntityLiving()).setNoAi(false);
+    public void generateFeatures(RegistryHelper helper) {
+        LivingEntityEvents.TICK.register((livingEntity -> {
+            if (livingEntity instanceof Mob mob){
+                if (mob.getPersistenData().contains("StasisChamberTime")){
+                    long time = mob.getPersistentData().getLong("StasisChamberTime");
+                    if (time + 50 <= mob.level.getGameTime()) {
+                        mob.setNoAi(false);
+                    }
+                }
             }
-        }).subscribe();
-        TAB_MISC.addIconStack(() -> new ItemStack(STASIS_CHAMBER.getLeft().get()));
+        }));
+        TAB_MISC.addIconStack(() -> new ItemStack(STASIS_CHAMBER.getLeft()));
     }
 }

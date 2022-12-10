@@ -25,54 +25,50 @@ package com.buuz135.industrial.recipe.provider;
 import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.buuz135.industrial.utils.Reference;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
-import net.minecraft.data.tags.ItemTagsProvider;
+import me.alphamode.forgetags.Tags;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.minecraft.core.Registry;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class IndustrialTagsProvider {
 
-    public static class Blocks extends BlockTagsProvider {
+    public static class Blocks extends FabricTagProvider.BlockTagProvider {
 
-        public Blocks(DataGenerator generatorIn, String modid, ExistingFileHelper helper) {
-            super(generatorIn, modid, helper);
+        public Blocks(FabricDataGenerator generatorIn, String modid) {
+            super(generatorIn);
         }
 
         @Override
-        protected void addTags() {
-            tag(IndustrialTags.Blocks.MACHINE_FRAME_PITY).add(ModuleCore.PITY.get());
-            tag(IndustrialTags.Blocks.MACHINE_FRAME_SIMPLE).add(ModuleCore.SIMPLE.get());
-            tag(IndustrialTags.Blocks.MACHINE_FRAME_ADVANCED).add(ModuleCore.ADVANCED.get());
-            tag(IndustrialTags.Blocks.MACHINE_FRAME_SUPREME).add(ModuleCore.SUPREME.get());
+        protected void generateTags() {
+            tag(IndustrialTags.Blocks.MACHINE_FRAME_PITY).add(ModuleCore.PITY);
+            tag(IndustrialTags.Blocks.MACHINE_FRAME_SIMPLE).add(ModuleCore.SIMPLE);
+            tag(IndustrialTags.Blocks.MACHINE_FRAME_ADVANCED).add(ModuleCore.ADVANCED);
+            tag(IndustrialTags.Blocks.MACHINE_FRAME_SUPREME).add(ModuleCore.SUPREME);
 
             TagAppender<Block> tTagAppender = this.tag(BlockTags.MINEABLE_WITH_PICKAXE);
 
-            ForgeRegistries.BLOCKS.getValues().stream().filter(block -> block.getRegistryName().getNamespace().equals(Reference.MOD_ID)).forEach(tTagAppender::add);
+            Registry.BLOCK.stream().filter(block -> block.getRegistryName().getNamespace().equals(Reference.MOD_ID)).forEach(tTagAppender::add);
         }
     }
 
-    public static class Items extends ItemTagsProvider {
+    public static class Items extends FabricTagProvider.ItemTagProvider {
 
-        public Items(DataGenerator generatorIn, String modid, ExistingFileHelper helper) {
-            super(generatorIn, new Blocks(generatorIn, modid, helper), modid, helper);
+        public Items(FabricDataGenerator generatorIn, String modid) {
+            super(generatorIn, new Blocks(generatorIn, modid));
         }
 
         @Override
-        protected void addTags() {
+        protected void generateTags() {
             this.copy(IndustrialTags.Blocks.MACHINE_FRAME_PITY,  IndustrialTags.Items.MACHINE_FRAME_PITY);
             this.copy(IndustrialTags.Blocks.MACHINE_FRAME_SIMPLE,  IndustrialTags.Items.MACHINE_FRAME_SIMPLE);
             this.copy(IndustrialTags.Blocks.MACHINE_FRAME_ADVANCED,  IndustrialTags.Items.MACHINE_FRAME_ADVANCED);
             this.copy(IndustrialTags.Blocks.MACHINE_FRAME_SUPREME, IndustrialTags.Items.MACHINE_FRAME_SUPREME);
 
-            tag(IndustrialTags.Items.PLASTIC).add(ModuleCore.PLASTIC.get());
+            tag(IndustrialTags.Items.PLASTIC).add(ModuleCore.PLASTIC);
             tag(IndustrialTags.Items.SLUDGE_OUTPUT).add(net.minecraft.world.item.Items.DIRT, net.minecraft.world.item.Items.CLAY, net.minecraft.world.item.Items.GRAVEL, net.minecraft.world.item.Items.SAND, net.minecraft.world.item.Items.RED_SAND, net.minecraft.world.item.Items.SOUL_SAND);
-            tag(Tags.Items.SLIMEBALLS).add(ModuleCore.PINK_SLIME_ITEM.get());
+            tag(Tags.Items.SLIMEBALLS).add(ModuleCore.PINK_SLIME_ITEM);
         }
     }
 

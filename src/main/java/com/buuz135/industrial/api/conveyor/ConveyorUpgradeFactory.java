@@ -45,9 +45,15 @@ public abstract class ConveyorUpgradeFactory implements IRecipeProvider {
     public static final List<ConveyorUpgradeFactory> FACTORIES = new ArrayList<>();
 
     private Item upgradeItem;
+    final String name;
 
-    public ConveyorUpgradeFactory() {
+    public ConveyorUpgradeFactory(String name) {
         FACTORIES.add(this);
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public abstract ConveyorUpgrade create(IBlockContainer container, Direction face);

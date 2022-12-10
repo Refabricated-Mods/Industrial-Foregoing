@@ -32,6 +32,7 @@ import com.hrznstudio.titanium.annotation.Save;
 import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
+import dev.cafeteria.fakeplayerapi.server.FakeServerPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.DyeColor;
@@ -65,19 +66,24 @@ public class BlockBreakerTile extends IndustrialAreaWorkingTile<BlockBreakerTile
     public WorkAction work() {
         if (hasEnergy(getPowerPerOperation)) {
             BlockPos pointed = getPointedBlockPos();
-            if (isLoaded(pointed) && !level.isEmptyBlock(pointed) && BlockUtils.canBlockBeBroken(this.level, pointed)) {
-                FakePlayer fakePlayer = IndustrialForegoing.getFakePlayer(this.level, pointed);
-                fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.NETHERITE_PICKAXE));
-                if (this.level.getBlockState(pointed).getDestroySpeed(this.level, pointed) >= 0 && this.level.getBlockState(pointed).canHarvestBlock(this.level, pointed, fakePlayer)) {
-                    for (ItemStack blockDrop : BlockUtils.getBlockDrops(this.level, pointed)) {
-                        ItemStack result = ItemHandlerHelper.insertItem(output, blockDrop, false);
-                        if (!result.isEmpty()) {
-                            BlockUtils.spawnItemStack(result, this.level, pointed);
+
+            if (isLoaded(pointed) && !level.isEmptyBlock(pointed)) {
+                FakeServerPlayer fakePlayer = IndustrialForegoing.getFakePlayer(this.level, pointed, "block_breaker");
+                if (BlockUtils.canBlockBeBroken(this.level, pointed, fakePlayer)) {
+                    fakePlayer.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.NETHERITE_PICKAXE));
+                    if (this.level.getBlockState(pointed).getDestroySpeed(this.level, pointed) >= 0 && this.level.getBlockState(pointed).canHarvestBlock(this.level, pointed, fakePlayer)) {
+                        for (ItemStack blockDrop : BlockUtils.getBlockDrops(this.level, pointed)) {
+                            ItemStack result = ItemHandlerHelper.insertItem(output, blockDrop, false);
+                            if (!result.isEmpty()) {
+                                BlockUtils.spawnItemStack(result, this.level, pointed);
+                            }
                         }
+                        this.level.setBlockAndUpdate(pointed, Blocks.AIR.defaultBlockState());
+                        increasePointer();
+                        return new WorkAction(1, getPowerPerOperation);
                     }
-                    this.level.setBlockAndUpdate(pointed, Blocks.AIR.defaultBlockState());
+                } else {
                     increasePointer();
-                    return new WorkAction(1, getPowerPerOperation);
                 }
             } else {
                 increasePointer();

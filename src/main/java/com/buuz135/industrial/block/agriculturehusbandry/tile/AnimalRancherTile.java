@@ -33,6 +33,7 @@ import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
+import dev.cafeteria.fakeplayerapi.server.FakeServerPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.PathfinderMob;
@@ -83,7 +84,7 @@ public class AnimalRancherTile extends IndustrialAreaWorkingTile<AnimalRancherTi
             List<PathfinderMob> mobs = this.level.getEntitiesOfClass(PathfinderMob.class, getWorkingArea().bounds());
             if (mobs.size() > 0) {
                 for (PathfinderMob mob : mobs) {
-                    FakePlayer player = IndustrialForegoing.getFakePlayer(level, mob.blockPosition()); //getPosition
+                    FakeServerPlayer player = IndustrialForegoing.getFakePlayer(level, mob.blockPosition(), "animal_rancher"); //getPosition
                     //SHEAR INTERACTION
                     ItemStack shears = new ItemStack(Items.SHEARS);
                     if (mob instanceof IForgeShearable && ((IForgeShearable) mob).isShearable(shears, this.level, mob.blockPosition())) { //getPosition

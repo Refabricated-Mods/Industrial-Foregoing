@@ -36,6 +36,8 @@ import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.hrznstudio.titanium.util.TileUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -242,7 +244,7 @@ public class TransporterItemType extends FilteredTransporterType<ItemStack, IIte
     public static class Factory extends TransporterTypeFactory {
 
         public Factory() {
-            setRegistryName("item");
+            super("item");
         }
 
         @Override

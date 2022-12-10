@@ -115,7 +115,7 @@ public class PlantGathererTile extends IndustrialAreaWorkingTile<PlantGathererTi
                             return new WorkAction(0.3f, powerPerOperation);
                         }
                     }else {
-                        Optional<PlantRecollectable> optional = IFRegistries.PLANT_RECOLLECTABLES_REGISTRY.get().getValues().stream().filter(plantRecollectable -> plantRecollectable.canBeHarvested(this.level, pointed, this.level.getBlockState(pointed))).findFirst();
+                        Optional<PlantRecollectable> optional = IFRegistries.PLANT_RECOLLECTABLE.stream().filter(plantRecollectable -> plantRecollectable.canBeHarvested(this.level, pointed, this.level.getBlockState(pointed))).findFirst();
                         if (optional.isPresent()) {
                             List<ItemStack> drops = optional.get().doHarvestOperation(this.level, pointed, this.level.getBlockState(pointed));
                             tank.fillForced(new FluidStack(ModuleCore.SLUDGE.getSourceFluid().get(), 10 * drops.size()), IFluidHandler.FluidAction.EXECUTE);

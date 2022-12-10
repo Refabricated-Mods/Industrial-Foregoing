@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.config.machine.resourceproduction.FluidPlacerConfig;
@@ -64,7 +65,7 @@ public class FluidPlacerTile extends IndustrialAreaWorkingTile<FluidPlacerTile> 
     public WorkAction work() {
         if (hasEnergy(getPowerPerOperation)) {
             BlockPos pointed = getPointedBlockPos();
-            if (isLoaded(pointed) && BlockUtils.canBlockBeBroken(this.level, pointed) && !level.getFluidState(pointed).isSource() && tank.getFluidAmount() >= FluidAttributes.BUCKET_VOLUME) {
+            if (isLoaded(pointed) && BlockUtils.canBlockBeBroken(this.level, pointed, IndustrialForegoing.getFakePlayer(level, "fluid_placer")) && !level.getFluidState(pointed).isSource() && tank.getFluidAmount() >= FluidAttributes.BUCKET_VOLUME) {
                 if (tank.getFluid().getFluid().isSame(Fluids.WATER) && level.getBlockState(pointed).hasProperty(BlockStateProperties.WATERLOGGED) && !level.getBlockState(pointed).getValue(BlockStateProperties.WATERLOGGED)) {
                     level.setBlockAndUpdate(pointed, level.getBlockState(pointed).setValue(BlockStateProperties.WATERLOGGED, true));
                     tank.drainForced(FluidAttributes.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);

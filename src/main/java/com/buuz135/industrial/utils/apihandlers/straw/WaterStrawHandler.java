@@ -40,7 +40,6 @@ public class WaterStrawHandler extends StrawHandlerBase {
 
     public WaterStrawHandler() {
         super(() -> Fluids.WATER);
-        setRegistryName("water");
     }
 
     @Override

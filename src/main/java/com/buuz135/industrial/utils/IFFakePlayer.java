@@ -23,6 +23,10 @@
 package com.buuz135.industrial.utils;
 
 import com.mojang.authlib.GameProfile;
+import dev.cafeteria.fakeplayerapi.server.FakePlayerBuilder;
+import dev.cafeteria.fakeplayerapi.server.FakeServerPlayer;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.InteractionResult;
@@ -33,23 +37,36 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.FakePlayer;
 
 import java.util.UUID;
 
-public class IFFakePlayer extends FakePlayer {
+public class IFFakePlayer extends FakeServerPlayer {
 
     private static final UUID uuid = UUID.fromString("ec5b5875-ebb5-4b47-833b-0de37ac9e6d7");
 
     private static GameProfile PROFILE = new GameProfile(uuid, "[IF]");
 
-    public IFFakePlayer(ServerLevel worldIn) {
-        super(worldIn, PROFILE);
+    public IFFakePlayer(FakePlayerBuilder builder, MinecraftServer server, ServerLevel world, GameProfile profile) {
+        super(builder, server, world, profile);
     }
+
 
     public boolean placeBlock(Level world, BlockPos pos, ItemStack stack) {
         this.setItemInHand(InteractionHand.MAIN_HAND, stack);
         return ForgeHooks.onPlaceItemIntoWorld(new UseOnContext(this, InteractionHand.MAIN_HAND, new BlockHitResult(new Vec3(0, 0, 0), Direction.DOWN, pos, false))) == InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public boolean isCreative() {
+        return false;
+    }
+
+    @Override
+    public boolean isSpectator() {
+        return false;
+    }
+
+    @Override
+    public void playSound(SoundEvent sound, float volume, float pitch) {
     }
 }

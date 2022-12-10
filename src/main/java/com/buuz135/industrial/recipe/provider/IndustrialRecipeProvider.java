@@ -33,6 +33,9 @@ import com.hrznstudio.titanium.block.BasicBlock;
 import com.hrznstudio.titanium.recipe.generator.TitaniumRecipeProvider;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapelessRecipeBuilder;
+import com.hrznstudio.titanium.util.NonNullLazy;
+import me.alphamode.forgetags.Tags;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
@@ -44,9 +47,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.util.NonNullLazy;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,7 +57,7 @@ public class IndustrialRecipeProvider extends TitaniumRecipeProvider {
 
     private final NonNullLazy<List<Block>> blocks;
 
-    public IndustrialRecipeProvider(DataGenerator generatorIn, NonNullLazy<List<Block>> blocks) {
+    public IndustrialRecipeProvider(FabricDataGenerator generatorIn, NonNullLazy<List<Block>> blocks) {
         super(generatorIn);
         this.blocks = blocks;
     }
@@ -69,52 +69,52 @@ public class IndustrialRecipeProvider extends TitaniumRecipeProvider {
         ConveyorUpgradeFactory.FACTORIES.forEach(conveyorUpgradeFactory -> conveyorUpgradeFactory.registerRecipe(consumer));
         TransporterTypeFactory.FACTORIES.forEach(typeFactory -> typeFactory.registerRecipe(consumer));
         //TOOL
-        ((IRecipeProvider)ModuleTool.MOB_IMPRISONMENT_TOOL.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleTool.MEAT_FEEDER.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleTool.INFINITY_DRILL.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleTool.INFINITY_SAW.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleTool.INFINITY_HAMMER.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleTool.INFINITY_TRIDENT.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleTool.INFINITY_BACKPACK.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleTool.INFINITY_LAUNCHER.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleTool.INFINITY_NUKE.get()).registerRecipe(consumer);
+        ((IRecipeProvider)ModuleTool.MOB_IMPRISONMENT_TOOL).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleTool.MEAT_FEEDER).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleTool.INFINITY_DRILL).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleTool.INFINITY_SAW).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleTool.INFINITY_HAMMER).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleTool.INFINITY_TRIDENT).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleTool.INFINITY_BACKPACK).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleTool.INFINITY_LAUNCHER).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleTool.INFINITY_NUKE).registerRecipe(consumer);
         //CORE
-        ((IRecipeProvider)ModuleCore.STRAW.get()).registerRecipe(consumer);
-        for (RegistryObject<Item> rangeAddon : ModuleCore.RANGE_ADDONS) {
-            ((IRecipeProvider) rangeAddon.get()).registerRecipe(consumer);
+        ((IRecipeProvider)ModuleCore.STRAW).registerRecipe(consumer);
+        for (Item rangeAddon : ModuleCore.RANGE_ADDONS) {
+            ((IRecipeProvider) rangeAddon).registerRecipe(consumer);
         }
-        ((IRecipeProvider) ModuleCore.SPEED_ADDON_1.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleCore.SPEED_ADDON_2.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleCore.EFFICIENCY_ADDON_1.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleCore.EFFICIENCY_ADDON_2.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleCore.PROCESSING_ADDON_1.get()).registerRecipe(consumer);
-        ((IRecipeProvider) ModuleCore.PROCESSING_ADDON_2.get()).registerRecipe(consumer);
-        TitaniumShapelessRecipeBuilder.shapelessRecipe(ModuleCore.DRY_RUBBER.get()).requires(ModuleCore.TINY_DRY_RUBBER.get(), 9).save(consumer);
-        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModuleCore.DRY_RUBBER.get()), ModuleCore.PLASTIC.get(), 0.3f, 200).unlockedBy("has_plastic", this.has(ModuleCore.DRY_RUBBER.get())).save(consumer);
-        TitaniumShapedRecipeBuilder.shapedRecipe(ModuleCore.PITY.get())
+        ((IRecipeProvider) ModuleCore.SPEED_ADDON_1).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleCore.SPEED_ADDON_2).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleCore.EFFICIENCY_ADDON_1).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleCore.EFFICIENCY_ADDON_2).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleCore.PROCESSING_ADDON_1).registerRecipe(consumer);
+        ((IRecipeProvider) ModuleCore.PROCESSING_ADDON_2).registerRecipe(consumer);
+        TitaniumShapelessRecipeBuilder.shapelessRecipe(ModuleCore.DRY_RUBBER).requires(ModuleCore.TINY_DRY_RUBBER, 9).save(consumer);
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(ModuleCore.DRY_RUBBER), ModuleCore.PLASTIC, 0.3f, 200).unlockedBy("has_plastic", this.has(ModuleCore.DRY_RUBBER)).save(consumer);
+        TitaniumShapedRecipeBuilder.shapedRecipe(ModuleCore.PITY)
                 .pattern("WIW").pattern("IRI").pattern("WIW")
                 .define('W', ItemTags.LOGS)
                 .define('I', Tags.Items.INGOTS_IRON)
                 .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
                 .save(consumer);
-        TitaniumShapedRecipeBuilder.shapedRecipe(ModuleCore.IRON_GEAR.get())
+        TitaniumShapedRecipeBuilder.shapedRecipe(ModuleCore.IRON_GEAR)
                 .pattern(" P ").pattern("P P").pattern(" P ")
                 .define('P', Items.IRON_INGOT)
                 .save(consumer);
-        TitaniumShapedRecipeBuilder.shapedRecipe(ModuleCore.GOLD_GEAR.get())
+        TitaniumShapedRecipeBuilder.shapedRecipe(ModuleCore.GOLD_GEAR)
                 .pattern(" P ").pattern("P P").pattern(" P ")
                 .define('P', Items.GOLD_INGOT)
                 .save(consumer);
-        TitaniumShapedRecipeBuilder.shapedRecipe(ModuleCore.DIAMOND_GEAR.get())
+        TitaniumShapedRecipeBuilder.shapedRecipe(ModuleCore.DIAMOND_GEAR)
                 .pattern(" P ").pattern("P P").pattern(" P ")
                 .define('P', Items.DIAMOND)
                 .save(consumer);
-        for (RegistryObject<Item> laserLen : ModuleCore.LASER_LENS) {
-            ((IRecipeProvider)laserLen.get()).registerRecipe(consumer);
+        for (Item laserLen : ModuleCore.LASER_LENS) {
+            ((IRecipeProvider)laserLen).registerRecipe(consumer);
         }
         for (DyeColor value : DyeColor.values()) {
-            TitaniumShapelessRecipeBuilder.shapelessRecipe(ModuleCore.LASER_LENS[value.getId()].get())
-                    .requires(Ingredient.of(Arrays.stream(ModuleCore.LASER_LENS).map(itemRegistryObject -> new ItemStack(itemRegistryObject.get())).collect(Collectors.toList()).stream()))
+            TitaniumShapelessRecipeBuilder.shapelessRecipe(ModuleCore.LASER_LENS[value.getId()])
+                    .requires(Ingredient.of(Arrays.stream(ModuleCore.LASER_LENS).map(itemRegistryObject -> new ItemStack(itemRegistryObject)).collect(Collectors.toList()).stream()))
                     .requires(value.getTag())
                     .save(consumer, new ResourceLocation(Reference.MOD_ID, "laser_lens_"+value.getSerializedName()+ "_recolor"));
         }

@@ -33,7 +33,6 @@ import com.hrznstudio.titanium.annotation.Save;
 import com.hrznstudio.titanium.api.IFactory;
 import com.hrznstudio.titanium.api.client.AssetTypes;
 import com.hrznstudio.titanium.api.client.IScreenAddon;
-import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.client.screen.addon.StateButtonAddon;
 import com.hrznstudio.titanium.client.screen.addon.StateButtonInfo;
 import com.hrznstudio.titanium.component.button.ButtonComponent;
@@ -43,7 +42,11 @@ import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
 import com.hrznstudio.titanium.component.inventory.SidedInventoryComponent;
 import com.hrznstudio.titanium.item.AugmentWrapper;
 import com.hrznstudio.titanium.util.LangUtil;
-import com.hrznstudio.titanium.util.TagUtil;
+import dev.cafeteria.fakeplayerapi.server.FakeServerPlayer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -55,7 +58,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -69,27 +71,13 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.registries.ForgeRegistries;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
-
-    private final Method GET_EXPERIENCE_POINTS = ObfuscationReflectionHelper.findMethod(LivingEntity.class, "m_6552_", Player.class);
-    private final Method DROP_SPECIAL_ITEMS = ObfuscationReflectionHelper.findMethod(Mob.class, "m_7472_", DamageSource.class, int.class, boolean.class);
 
     @Save
     private SidedInventoryComponent<MobCrusherTile> output;
@@ -101,8 +89,6 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
 
     public MobCrusherTile(BlockPos blockPos, BlockState blockState) {
         super(ModuleAgricultureHusbandry.MOB_CRUSHER, RangeManager.RangeType.BEHIND, true, MobCrusherConfig.powerPerOperation, blockPos, blockState);
-        if (!GET_EXPERIENCE_POINTS.isAccessible()) GET_EXPERIENCE_POINTS.setAccessible(true);
-        if (!DROP_SPECIAL_ITEMS.isAccessible()) DROP_SPECIAL_ITEMS.setAccessible(true);
         this.dropXP = true;
         this.addTank(tank = (SidedFluidTankComponent<MobCrusherTile>) new SidedFluidTankComponent<MobCrusherTile>("essence", MobCrusherConfig.tankSize, 43, 20, 0).
                 setColor(DyeColor.LIME).
@@ -142,8 +128,8 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
             mobEntity.isBaby()) && !mobEntity.isInvulnerable() && !(mobEntity instanceof WitherBoss && ((WitherBoss) mobEntity).getInvulnerableTicks() > 0)).filter(LivingEntity::isAlive).collect(Collectors.toList());
             if (mobs.size() > 0) {
                 Mob entity = mobs.get(0);
-                FakePlayer player = IndustrialForegoing.getFakePlayer(this.level);
-                if (ForgeRegistries.ENTITIES.tags().getTag(IndustrialTags.EntityTypes.MOB_CRUSHER_INSTANT_KILL_BLACKLIST).contains(entity.getType())){
+                FakeServerPlayer player = IndustrialForegoing.getFakePlayer(level, "mob_crusher");
+                if (entity.getType().is(IndustrialTags.EntityTypes.MOB_CRUSHER_INSTANT_KILL_BLACKLIST)){
                     return damage(entity, player);
                 } else {
                     return instantKill(entity, player);
@@ -153,13 +139,8 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
         return new WorkAction(1, 0);
     }
 
-    private WorkAction instantKill(Mob entity, FakePlayer player){
-        int experience = 0;
-        try {
-            experience = (int) GET_EXPERIENCE_POINTS.invoke(entity, player);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    private WorkAction instantKill(Mob entity, FakeServerPlayer player){
+        int experience = entity.getExperienceReward(player);
         int looting = 0;
         if (!dropXP) {
             looting = this.level.random.nextInt(4);
@@ -181,29 +162,28 @@ public class MobCrusherTile extends IndustrialAreaWorkingTile<MobCrusherTile> {
         table.getRandomItems(context.create(LootContextParamSets.ENTITY)).forEach(stack -> ItemHandlerHelper.insertItem(this.output, stack, false));
         List<ItemEntity> extra = new ArrayList<>();
         //Drop special items
-        try {
-            if (entity.captureDrops() == null) entity.captureDrops(new ArrayList<>());
-            DROP_SPECIAL_ITEMS.invoke(entity, source, looting, true);
-            if (entity.captureDrops() != null) {
-                extra.addAll(entity.captureDrops());
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        if (entity.captureDrops() == null) entity.captureDrops(new ArrayList<>());
+        entity.dropCustomDeathLoot(source, looting, true);
+        if (entity.captureDrops() != null) {
+            extra.addAll(entity.captureDrops());
         }
         ForgeHooks.onLivingDrops(entity, source, extra, looting, true);
         extra.forEach(itemEntity -> {
             ItemHandlerHelper.insertItem(this.output, itemEntity.getItem(), false);
             itemEntity.remove(Entity.RemovalReason.KILLED);
         });
-        if (dropXP)
-            this.tank.fillForced(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), experience * 20), IFluidHandler.FluidAction.EXECUTE);
+        if (dropXP) {
+            Transaction transaction = Transaction.openOuter();
+            this.tank.insert(FluidVariant.of(ModuleCore.ESSENCE.getSourceFluid()), experience * 20 * 81L, transaction);
+            transaction.commit();
+        }
         entity.setHealth(0);
         entity.remove(Entity.RemovalReason.KILLED);
         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         return new WorkAction(0.1f, MobCrusherConfig.powerPerOperation);
     }
 
-    private WorkAction damage(Mob entity, FakePlayer player){
+    private WorkAction damage(Mob entity, FakeServerPlayer player){
         entity.hurt((DamageSource.playerAttack(player)).setMagic(), MobCrusherConfig.attackDamage);
         return new WorkAction(0.1f, MobCrusherConfig.powerPerOperation);
     }

@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.utils.apihandlers.straw;
 
+import io.github.tropheusj.milk.Milk;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.item.ItemStack;
@@ -35,8 +36,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class MilkStrawHandler extends StrawHandlerBase {
     public MilkStrawHandler() {
-        super(ForgeMod.MILK);
-        setRegistryName("milk");
+        super(() -> Milk.STILL_MILK);
     }
 
     @Override

@@ -34,6 +34,8 @@ import com.google.common.collect.Sets;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.hrznstudio.titanium.util.TileUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.entity.Entity;
@@ -189,7 +191,7 @@ public class TransporterWorldType extends FilteredTransporterType<ItemStack, IIt
     public static class Factory extends TransporterTypeFactory {
 
         public Factory() {
-            setRegistryName("world");
+            super("world");
         }
 
         @Override

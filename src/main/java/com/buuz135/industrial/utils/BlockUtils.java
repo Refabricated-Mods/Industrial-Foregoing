@@ -25,6 +25,7 @@ package com.buuz135.industrial.utils;
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.module.ModuleCore;
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.cafeteria.fakeplayerapi.server.FakeServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -98,9 +99,9 @@ public class BlockUtils {
         return world.getBlockState(pos).getBlock().equals(Blocks.CHORUS_PLANT) || world.getBlockState(pos).getBlock().equals(Blocks.CHORUS_FLOWER);
     }
 
-    public static boolean canBlockBeBroken(Level world, BlockPos pos) {
+    public static boolean canBlockBeBroken(Level world, BlockPos pos, FakeServerPlayer player) {
         //if (world.isAirBlock(pos)) return false;
-        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), IndustrialForegoing.getFakePlayer(world));
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), player);
         MinecraftForge.EVENT_BUS.post(event);
         return !event.isCanceled();
     }

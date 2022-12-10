@@ -23,7 +23,6 @@
 package com.buuz135.industrial.proxy.client;
 
 import com.buuz135.industrial.IndustrialForegoing;
-import com.buuz135.industrial.block.IndustrialBlock;
 import com.buuz135.industrial.block.generator.tile.MycelialReactorTile;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.transportstorage.tile.BHTile;
@@ -44,7 +43,6 @@ import com.buuz135.industrial.proxy.client.render.*;
 import com.buuz135.industrial.proxy.network.BackpackOpenMessage;
 import com.buuz135.industrial.utils.FluidUtils;
 import com.buuz135.industrial.utils.Reference;
-import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.event.handler.EventManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
@@ -60,10 +58,8 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -88,9 +84,6 @@ import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientProxy extends CommonProxy {
@@ -98,9 +91,6 @@ public class ClientProxy extends CommonProxy {
     public static ResourceLocation GUI = new ResourceLocation(Reference.MOD_ID, "textures/gui/machines.png");
     public static BakedModel ears_baked;
     public static OBJModel ears_model;
-
-    public static final SoundEvent NUKE_EXPLOSION = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "nuke_explosion")).setRegistryName(new ResourceLocation(Reference.MOD_ID, "nuke_explosion"));
-    public static final SoundEvent NUKE_ARMING = new SoundEvent(new ResourceLocation(Reference.MOD_ID, "nuke_arming")).setRegistryName(new ResourceLocation(Reference.MOD_ID, "nuke_arming"));
 
     public KeyMapping OPEN_BACKPACK;
 

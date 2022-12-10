@@ -83,7 +83,7 @@ public class WitherBuilderTile extends IndustrialAreaWorkingTile<WitherBuilderTi
 
 	@Override
 	public WorkAction work() {
-		if (!hasEnergy(WitherBuilderConfig.powerPerOperation) || !BlockUtils.canBlockBeBroken(this.level, this.worldPosition))
+		if (!hasEnergy(WitherBuilderConfig.powerPerOperation) || !BlockUtils.canBlockBeBroken(this.level, this.worldPosition, IndustrialForegoing.getFakePlayer(this.level, "wither_builder")))
 			return new WorkAction(1, 0);
 		BlockPos pos = this.worldPosition.offset(0, 2, 0);
 		float power = 0;
@@ -130,7 +130,7 @@ public class WitherBuilderTile extends IndustrialAreaWorkingTile<WitherBuilderTi
 						temp = pos.offset(i - 1, 2, 0);
 					}
 					if (this.level.getBlockState(temp).getBlock().equals(Blocks.AIR) && !getDefaultOrFind(i, top, new ItemStack(Items.WITHER_SKELETON_SKULL)).isEmpty() && this.level.getBlockState(temp.offset(0, -1, 0)).getBlock().equals(Blocks.SOUL_SAND)) {
-						IFFakePlayer fakePlayer = (IFFakePlayer) IndustrialForegoing.getFakePlayer(level, temp);
+						IFFakePlayer fakePlayer = (IFFakePlayer) IndustrialForegoing.getFakePlayer(level, temp, "wither_builder");
 						ItemStack stack = getDefaultOrFind(i, top, new ItemStack(Items.WITHER_SKELETON_SKULL));
 						if (fakePlayer.placeBlock(this.level, temp, stack)) {
 							power += 1 / 7f;

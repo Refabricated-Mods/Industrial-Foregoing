@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.block.resourceproduction.tile;
 
+import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.block.tile.IndustrialAreaWorkingTile;
 import com.buuz135.industrial.block.tile.RangeManager;
 import com.buuz135.industrial.config.machine.resourceproduction.FluidCollectorConfig;
@@ -32,6 +33,7 @@ import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import com.hrznstudio.titanium.component.fluid.FluidTankComponent;
 import com.hrznstudio.titanium.component.fluid.SidedFluidTankComponent;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Blocks;
@@ -67,9 +69,9 @@ public class FluidCollectorTile extends IndustrialAreaWorkingTile<FluidCollector
     public WorkAction work() {
         if (hasEnergy(getPowerPerOperation)) {
             BlockPos pointed = getPointedBlockPos();
-            if (isLoaded(pointed) && !level.isEmptyBlock(pointed) && BlockUtils.canBlockBeBroken(this.level, pointed) && level.getFluidState(pointed).isSource()) {
+            if (isLoaded(pointed) && !level.isEmptyBlock(pointed) && BlockUtils.canBlockBeBroken(this.level, pointed, IndustrialForegoing.getFakePlayer(level, "fluid_collector")) && level.getFluidState(pointed).isSource()) {
                 Fluid fluid = level.getFluidState(pointed).getType();
-                if (tank.isEmpty() || (tank.getFluid().getFluid().isSame(fluid) && tank.getFluidAmount() + FluidAttributes.BUCKET_VOLUME <= tank.getCapacity())) {
+                if (tank.isEmpty() || (tank.getFluid().getFluid().isSame(fluid) && tank.getFluidAmount() + FluidConstants.BUCKET <= tank.getCapacity())) {
                     if (level.getBlockState(pointed).hasProperty(BlockStateProperties.WATERLOGGED)) { //has
                         level.setBlockAndUpdate(pointed, level.getBlockState(pointed).setValue(BlockStateProperties.WATERLOGGED, false));
                     } else {

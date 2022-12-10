@@ -1,0 +1,5 @@
+accessWidener	v1	named
+
+accessible method net/minecraft/world/entity/Mob getExperienceReward (Lnet/minecraft/world/entity/player/Player;)I
+accessible method net/minecraft/world/entity/Mob dropCustomDeathLoot (Lnet/minecraft/world/damagesource/DamageSource;IZ)V
+accessible method net/minecraft/world/item/crafting/Ingredient$TagValue <init> (Lnet/minecraft/tags/TagKey;)V
