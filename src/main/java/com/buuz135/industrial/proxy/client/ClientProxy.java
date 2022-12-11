@@ -45,6 +45,10 @@ import com.buuz135.industrial.utils.FluidUtils;
 import com.buuz135.industrial.utils.Reference;
 import io.github.fabricators_of_create.porting_lib.model.obj.OBJModel;
 import io.github.fabricators_of_create.porting_lib.util.RegistryObject;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -56,6 +60,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -80,26 +85,26 @@ public class ClientProxy extends CommonProxy {
     public void run() {
         OPEN_BACKPACK = new KeyMapping("key.industrialforegoing.backpack.desc", -1, "key.industrialforegoing.category");
         ClientRegistry.registerKeyBinding(OPEN_BACKPACK);
-        EventManager.forge(TickEvent.ClientTickEvent.class).process(event -> {
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
             if (OPEN_BACKPACK.consumeClick()) {
                 IndustrialForegoing.NETWORK.get().sendToServer(new BackpackOpenMessage(Screen.hasControlDown()));
             }
-        }).subscribe();
+        });
 
-
-        MinecraftForge.EVENT_BUS.register(new IFClientEvents());
+        WorldRenderEvents.BLOCK_OUTLINE.register((worldRenderContext, blockOutlineContext) -> IFClientEvents.blockOverlayEvent(Minecraft.getInstance().hitResult, worldRenderContext.camera()));
 
         //((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(resourceManager -> FluidUtils.colorCache.clear());
 
-        ItemBlockRenderTypes.setRenderLayer(ModuleTransportStorage.CONVEYOR.getLeft().get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModuleTransportStorage.BLACK_HOLE_TANK_COMMON.getLeft().get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModuleTransportStorage.BLACK_HOLE_TANK_PITY.getLeft().get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModuleTransportStorage.BLACK_HOLE_TANK_SIMPLE.getLeft().get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModuleTransportStorage.BLACK_HOLE_TANK_ADVANCED.getLeft().get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModuleTransportStorage.BLACK_HOLE_TANK_SUPREME.getLeft().get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(ModuleCore.DARK_GLASS.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModuleTransportStorage.CONVEYOR.getLeft(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModuleTransportStorage.BLACK_HOLE_TANK_COMMON.getLeft(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModuleTransportStorage.BLACK_HOLE_TANK_PITY.getLeft(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModuleTransportStorage.BLACK_HOLE_TANK_SIMPLE.getLeft(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModuleTransportStorage.BLACK_HOLE_TANK_ADVANCED.getLeft(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModuleTransportStorage.BLACK_HOLE_TANK_SUPREME.getLeft(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(ModuleCore.DARK_GLASS, RenderType.translucent());
 
-        Minecraft.getInstance().getBlockColors().register((state, worldIn, pos, tintIndex) -> {
+
+        ColorProviderRegistry.BLOCK.register((state, worldIn, pos, tintIndex) -> {
             if (tintIndex == 0 && worldIn != null && pos != null) {
                 BlockEntity entity = worldIn.getBlockEntity(pos);
                 if (entity instanceof ConveyorTile) {
@@ -107,25 +112,25 @@ public class ClientProxy extends CommonProxy {
                 }
             }
             return 0xFFFFFFF;
-        }, ModuleTransportStorage.CONVEYOR.getLeft().get());
-        Minecraft.getInstance().getItemColors().register((stack, tintIndex) -> {
+        }, ModuleTransportStorage.CONVEYOR.getLeft());
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
             if (tintIndex == 1 || tintIndex == 2 || tintIndex == 3) {
                 SpawnEggItem info = null;
                 if (stack.hasTag() && stack.getTag().contains("entity")) {
                     ResourceLocation id = new ResourceLocation(stack.getTag().getString("entity"));
-                    info = SpawnEggItem.byId(ForgeRegistries.ENTITIES.getValue(id));
+                    info = SpawnEggItem.byId(Registry.ENTITY_TYPE.get(id));
                 }
-                return info == null ? 0x636363 : tintIndex == 3 ? ((MobImprisonmentToolItem)ModuleTool.MOB_IMPRISONMENT_TOOL.get()).isBlacklisted(info.getType(new CompoundTag())) ? 0xDB201A : 0x636363 : info.getColor(tintIndex - 1);
+                return info == null ? 0x636363 : tintIndex == 3 ? ((MobImprisonmentToolItem)ModuleTool.MOB_IMPRISONMENT_TOOL).isBlacklisted(info.getType(new CompoundTag())) ? 0xDB201A : 0x636363 : info.getColor(tintIndex - 1);
             }
             return 0xFFFFFF;
-        }, ModuleTool.MOB_IMPRISONMENT_TOOL.get());
-        Minecraft.getInstance().getItemColors().register((stack, tintIndex) -> {
+        }, ModuleTool.MOB_IMPRISONMENT_TOOL);
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
             if (tintIndex == 0) {
                 return InfinityTier.getTierBraquet(ItemInfinity.getPowerFromStack(stack)).getLeft().getTextureColor();
             }
             return 0xFFFFFF;
-        }, ModuleTool.INFINITY_BACKPACK.get(), ModuleTool.INFINITY_LAUNCHER.get(), ModuleTool.INFINITY_NUKE.get(), ModuleTool.INFINITY_TRIDENT.get(), ModuleTool.INFINITY_HAMMER.get(), ModuleTool.INFINITY_SAW.get(), ModuleTool.INFINITY_DRILL.get());
-        Minecraft.getInstance().getBlockColors().register((state, worldIn, pos, tintIndex) -> {
+        }, ModuleTool.INFINITY_BACKPACK, ModuleTool.INFINITY_LAUNCHER, ModuleTool.INFINITY_NUKE, ModuleTool.INFINITY_TRIDENT, ModuleTool.INFINITY_HAMMER, ModuleTool.INFINITY_SAW, ModuleTool.INFINITY_DRILL);
+        ColorProviderRegistry.BLOCK.register((state, worldIn, pos, tintIndex) -> {
             if (tintIndex == 0 && worldIn != null && pos != null && worldIn.getBlockEntity(pos) instanceof BlackHoleTankTile) {
                 BlackHoleTankTile tank = (BlackHoleTankTile) worldIn.getBlockEntity(pos);
                 if (tank != null && tank.getTank().getFluidAmount() > 0) {
@@ -134,8 +139,8 @@ public class ClientProxy extends CommonProxy {
                 }
             }
             return 0xFFFFFF;
-        }, ModuleTransportStorage.BLACK_HOLE_TANK_COMMON.getLeft().get(), ModuleTransportStorage.BLACK_HOLE_TANK_PITY.getLeft().get(), ModuleTransportStorage.BLACK_HOLE_TANK_SIMPLE.getLeft().get(), ModuleTransportStorage.BLACK_HOLE_TANK_ADVANCED.getLeft().get(), ModuleTransportStorage.BLACK_HOLE_TANK_SUPREME.getLeft().get());
-        Minecraft.getInstance().getItemColors().register((stack, tintIndex) -> {
+        }, ModuleTransportStorage.BLACK_HOLE_TANK_COMMON.getLeft(), ModuleTransportStorage.BLACK_HOLE_TANK_PITY.getLeft(), ModuleTransportStorage.BLACK_HOLE_TANK_SIMPLE.getLeft(), ModuleTransportStorage.BLACK_HOLE_TANK_ADVANCED.getLeft(), ModuleTransportStorage.BLACK_HOLE_TANK_SUPREME.getLeft());
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
             if (tintIndex == 0 && stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent()) {
                 IFluidHandlerItem fluidHandlerItem = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).orElseGet(null);
                 if (fluidHandlerItem.getFluidInTank(0).getAmount() > 0){
@@ -144,8 +149,8 @@ public class ClientProxy extends CommonProxy {
                 }
             }
             return 0xFFFFFF;
-        },ModuleTransportStorage.BLACK_HOLE_TANK_COMMON.getLeft().get(), ModuleTransportStorage.BLACK_HOLE_TANK_PITY.getLeft().get(), ModuleTransportStorage.BLACK_HOLE_TANK_SIMPLE.getLeft().get(), ModuleTransportStorage.BLACK_HOLE_TANK_ADVANCED.getLeft().get(), ModuleTransportStorage.BLACK_HOLE_TANK_SUPREME.getLeft().get());
-        Minecraft.getInstance().getItemColors().register((stack, tintIndex) -> {
+        },ModuleTransportStorage.BLACK_HOLE_TANK_COMMON.getLeft(), ModuleTransportStorage.BLACK_HOLE_TANK_PITY.getLeft(), ModuleTransportStorage.BLACK_HOLE_TANK_SIMPLE.getLeft(), ModuleTransportStorage.BLACK_HOLE_TANK_ADVANCED.getLeft(), ModuleTransportStorage.BLACK_HOLE_TANK_SUPREME.getLeft());
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> {
             if (tintIndex == 1 && stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent()) {
                 IFluidHandlerItem fluidHandlerItem = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).orElseGet(null);
                 if (fluidHandlerItem.getFluidInTank(0).getAmount() > 0){

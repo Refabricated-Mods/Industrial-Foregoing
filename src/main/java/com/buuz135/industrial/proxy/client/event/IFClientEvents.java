@@ -23,6 +23,7 @@
 package com.buuz135.industrial.proxy.client.event;
 
 import com.buuz135.industrial.item.infinity.InfinityTier;
+import com.buuz135.industrial.item.infinity.ItemInfinity;
 import com.buuz135.industrial.item.infinity.item.ItemInfinityDrill;
 import com.buuz135.industrial.module.ModuleTool;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -49,19 +50,15 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class IFClientEvents {
 
-    @SubscribeEvent
-    public void blockOverlayEvent(DrawSelectionEvent event) {
-        HitResult hit = event.getTarget();
+    public static boolean blockOverlayEvent(HitResult hit, Camera info) {
         if (hit.getType() == HitResult.Type.BLOCK && Minecraft.getInstance().player.getMainHandItem().getItem().equals(ModuleTool.INFINITY_DRILL)) {
             BlockHitResult blockRayTraceResult = (BlockHitResult) hit;
-            event.setCanceled(true);
             ItemStack hand = Minecraft.getInstance().player.getMainHandItem();
-            InfinityTier tier = ((ItemInfinityDrill)ModuleTool.INFINITY_DRILL.get()).getSelectedTier(hand);
+            InfinityTier tier = ItemInfinity.getSelectedTier(hand);
             Level world = Minecraft.getInstance().player.level;
-            Pair<BlockPos, BlockPos> area = ((ItemInfinityDrill)ModuleTool.INFINITY_DRILL.get()).getArea(blockRayTraceResult.getBlockPos(), blockRayTraceResult.getDirection(), tier, false);
+            Pair<BlockPos, BlockPos> area = ((ItemInfinityDrill)ModuleTool.INFINITY_DRILL).getArea(blockRayTraceResult.getBlockPos(), blockRayTraceResult.getDirection(), tier, false);
             PoseStack stack = new PoseStack();
             stack.pushPose();
-            Camera info = event.getCamera();
             stack.mulPose(Vector3f.XP.rotationDegrees(info.getXRot()));
             stack.mulPose(Vector3f.YP.rotationDegrees(info.getYRot() + 180));
             double d0 = info.getPosition().x();
@@ -75,7 +72,9 @@ public class IFClientEvents {
                 }
             });
             stack.popPose();
+            return true;
         }
+        return false;
     }
 
     @SubscribeEvent
