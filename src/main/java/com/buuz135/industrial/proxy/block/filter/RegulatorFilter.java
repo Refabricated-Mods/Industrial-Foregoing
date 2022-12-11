@@ -21,6 +21,7 @@
  */
 package com.buuz135.industrial.proxy.block.filter;
 
+import com.hrznstudio.titanium.util.NBTUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 
@@ -90,7 +91,7 @@ public abstract class RegulatorFilter<TYPE, CAP> {
         for (int i = 0; i < this.getFilter().length; i++) {
             if (!this.getFilter()[i].getStack().isEmpty()) {
                 CompoundTag slot = new CompoundTag();
-                slot.put("Stack", this.getFilter()[i].getStack().serializeNBT());
+                slot.put("Stack", NBTUtil.tagFromStack(this.getFilter()[i].getStack()));
                 slot.putInt("Amount", this.getFilter()[i].getAmount());
                 compound.put(String.valueOf(i), slot);
             }

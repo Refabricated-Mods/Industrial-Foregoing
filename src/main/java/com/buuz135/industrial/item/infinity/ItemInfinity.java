@@ -43,6 +43,12 @@ import com.hrznstudio.titanium.network.locator.LocatorFactory;
 import com.hrznstudio.titanium.network.locator.PlayerInventoryFinder;
 import com.hrznstudio.titanium.network.locator.instance.HeldStackLocatorInstance;
 import com.hrznstudio.titanium.util.FacingUtil;
+import io.github.fabricators_of_create.porting_lib.util.FluidStack;
+import io.github.fabricators_of_create.porting_lib.util.NetworkDirection;
+import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -72,13 +78,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkHooks;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -300,7 +299,7 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot slot) {
         Multimap<Attribute, AttributeModifier> multimap = MultimapBuilder.hashKeys().arrayListValues().build();
         if (slot == EquipmentSlot.MAINHAND) {
             multimap.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", 3, AttributeModifier.Operation.ADDITION)); //AttackDamage
@@ -322,15 +321,15 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
             public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_221484_1_) {
                 return Optional.empty();
             }
-        }, playerEntity.inventory, menu);
+        }, playerEntity.getInventory(), menu);
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand handIn) {
         if (player.isCrouching()) {
             if (player instanceof ServerPlayer) {
-                IndustrialForegoing.NETWORK.get().sendTo(new BackpackOpenedMessage(player.inventory.selected, PlayerInventoryFinder.MAIN), ((ServerPlayer) player).connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
-                NetworkHooks.openGui((ServerPlayer) player, this, buffer ->
+                IndustrialForegoing.NETWORK.get().sendToClient(new BackpackOpenedMessage(player.getInventory().selected, PlayerInventoryFinder.MAIN), ((ServerPlayer) player));
+                NetworkUtil.openGui((ServerPlayer) player, this, buffer ->
                         LocatorFactory.writePacketBuffer(buffer, new HeldStackLocatorInstance(handIn == InteractionHand.MAIN_HAND)));
             }
             return InteractionResultHolder.success(player.getItemInHand(handIn));
@@ -421,14 +420,15 @@ public class ItemInfinity extends IFCustomItem implements MenuProvider, IButtonH
     }
 
     public IFactory<? extends FluidHandlerScreenProviderItemStack> getTankConstructor(ItemStack stack){
-        return () -> new FluidHandlerScreenProviderItemStack(stack, 1_000_000) {
+        return () -> new FluidHandlerScreenProviderItemStack(stack, 1_000_000 * 81) {
+
             @Override
-            public boolean canFillFluidType(FluidStack fluid) {
-                return fluid != null && fluid.getFluid() != null && fluid.getFluid().equals(ModuleCore.BIOFUEL.getSourceFluid().get());
+            protected boolean canInsert(FluidVariant fluid) {
+                return fluid != null && fluid.getFluid() != null && fluid.getFluid().equals(ModuleCore.BIOFUEL.getSourceFluid());
             }
 
             @Override
-            public boolean canDrainFluidType(FluidStack fluid) {
+            protected boolean canExtract(FluidVariant resource) {
                 return false;
             }
 

@@ -56,6 +56,11 @@ import com.hrznstudio.titanium.network.locator.LocatorFactory;
 import com.hrznstudio.titanium.network.locator.PlayerInventoryFinder;
 import com.hrznstudio.titanium.network.locator.instance.HeldStackLocatorInstance;
 import com.hrznstudio.titanium.network.locator.instance.InventoryStackLocatorInstance;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemHandlerHelper;
+import io.github.fabricators_of_create.porting_lib.util.FluidStack;
+import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -85,19 +90,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraftforge.event.entity.player.PlayerXpEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
@@ -155,8 +147,8 @@ public class ItemInfinityBackpack extends ItemInfinity {
                             ExperienceOrb entity = pickupXp.getOrb();
                             IFluidHandlerItem handlerItem = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).orElse(null);
                             if (handlerItem != null) {
-                                if (handlerItem.fill(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), entity.getValue() * 20), IFluidHandler.FluidAction.SIMULATE) > 0){
-                                    handlerItem.fill(new FluidStack(ModuleCore.ESSENCE.getSourceFluid().get(), entity.getValue() * 20), IFluidHandler.FluidAction.EXECUTE);
+                                if (handlerItem.fill(new FluidStack(ModuleCore.ESSENCE.getSourceFluid(), entity.getValue() * 20 * 81L), IFluidHandler.FluidAction.SIMULATE) > 0){
+                                    handlerItem.fill(new FluidStack(ModuleCore.ESSENCE.getSourceFluid(), entity.getValue() * 20 * 81L), IFluidHandler.FluidAction.EXECUTE);
                                     entity.onClientRemoval();
                                     pickupXp.setCanceled(true);
                                 }
@@ -175,7 +167,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
     }
 
     public static void sync(Level world, String id, ServerPlayer player) {
-        IndustrialForegoing.NETWORK.get().sendTo(new BackpackSyncMessage(id, BackpackDataManager.getData(world).getBackpack(id).serializeNBT()), player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
+        IndustrialForegoing.NETWORK.get().sendToClient(new BackpackSyncMessage(id, BackpackDataManager.getData(world).getBackpack(id).serializeNBT()), player);
     }
 
     public static boolean isMagnetEnabled(ItemStack stack) {
@@ -247,9 +239,9 @@ public class ItemInfinityBackpack extends ItemInfinity {
                 stack.setTag(nbt);
             }
             String id = stack.getTag().getString("Id");
-            IndustrialForegoing.NETWORK.get().sendTo(new BackpackOpenedMessage(player.inventory.selected, PlayerInventoryFinder.MAIN), ((ServerPlayer) player).connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
+            IndustrialForegoing.NETWORK.get().sendToClient(new BackpackOpenedMessage(player.getInventory().selected, PlayerInventoryFinder.MAIN), ((ServerPlayer) player));
             sync(worldIn, id, (ServerPlayer) player);
-            NetworkHooks.openGui((ServerPlayer) player, this, buffer ->
+            NetworkUtil.openGui((ServerPlayer) player, this, buffer ->
                     LocatorFactory.writePacketBuffer(buffer, new HeldStackLocatorInstance(handIn == InteractionHand.MAIN_HAND)));
             return InteractionResultHolder.success(player.getItemInHand(handIn));
         }
@@ -299,7 +291,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
                         if (enoughFuel(stack)) {
                             for (int i = 0; i < BackpackDataManager.SLOT_AMOUNT; i++) {
                                 if (!handler.getStackInSlot(i).isEmpty() && handler.getSlotDefinition(i).isRefillItems()) {
-                                    Inventory inventory = ((Player) entityIn).inventory;
+                                    Inventory inventory = ((Player) entityIn).getInventory();
                                     for (int inv = 0; inv <= 35; inv++) {
                                         ItemStack inventoryStack = inventory.getItem(inv);
                                         if (!inventoryStack.isEmpty() && inventoryStack.getCount() < inventoryStack.getMaxStackSize() && handler.isItemValid(i, inventoryStack) && enoughFuel(stack)) {
@@ -521,7 +513,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
                     public <T> Optional<T> evaluate(BiFunction<Level, BlockPos, T> p_221484_1_) {
                         return Optional.empty();
                     }
-                }, playerEntity.inventory, menu, id);
+                }, playerEntity.getInventory(), menu, id);
             }
             return null;
         }).orElse(null);
@@ -584,7 +576,7 @@ public class ItemInfinityBackpack extends ItemInfinity {
             factory.add(() -> new StateButtonAddon(new ButtonComponent(x, 16 + y * 3, 14, 14).setId(-10), new StateButtonInfo(0, AssetTypes.BUTTON_SIDENESS_ENABLED, ChatFormatting.GOLD + new TranslatableComponent("text.industrialforegoing.display.special").getString()), new StateButtonInfo(1, AssetTypes.BUTTON_SIDENESS_DISABLED, ChatFormatting.GOLD + new TranslatableComponent("text.industrialforegoing.display.special").getString())) {
                 @Override
                 public int getState() {
-                    return ((ItemInfinityBackpack)ModuleTool.INFINITY_BACKPACK.get()).isSpecialEnabled(stack.get()) ? 0 : 1;
+                    return ((ItemInfinityBackpack)ModuleTool.INFINITY_BACKPACK).isSpecialEnabled(stack.get()) ? 0 : 1;
                 }
             });
         }
@@ -595,16 +587,16 @@ public class ItemInfinityBackpack extends ItemInfinity {
     public void registerRecipe(Consumer<FinishedRecipe> consumer) {
         new DissolutionChamberRecipe(this.getRegistryName(),
                 new Ingredient.Value[]{
-                        new Ingredient.ItemValue(new ItemStack(ModuleTransportStorage.BLACK_HOLE_UNIT_COMMON.getLeft().get())),
+                        new Ingredient.ItemValue(new ItemStack(ModuleTransportStorage.BLACK_HOLE_UNIT_COMMON.getLeft())),
                         new Ingredient.TagValue(IndustrialTags.Items.GEAR_DIAMOND),
-                        new Ingredient.ItemValue(new ItemStack(ModuleTransportStorage.BLACK_HOLE_UNIT_COMMON.getLeft().get())),
-                        new Ingredient.ItemValue(new ItemStack(ModuleTransportStorage.BLACK_HOLE_TANK_COMMON.getLeft().get())),
-                        new Ingredient.ItemValue(new ItemStack(ModuleTransportStorage.BLACK_HOLE_TANK_COMMON.getLeft().get())),
+                        new Ingredient.ItemValue(new ItemStack(ModuleTransportStorage.BLACK_HOLE_UNIT_COMMON.getLeft())),
+                        new Ingredient.ItemValue(new ItemStack(ModuleTransportStorage.BLACK_HOLE_TANK_COMMON.getLeft())),
+                        new Ingredient.ItemValue(new ItemStack(ModuleTransportStorage.BLACK_HOLE_TANK_COMMON.getLeft())),
                         new Ingredient.TagValue(IndustrialTags.Items.GEAR_GOLD),
                         new Ingredient.TagValue(IndustrialTags.Items.GEAR_GOLD),
                         new Ingredient.TagValue(IndustrialTags.Items.GEAR_GOLD),
                 },
-                new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid().get(), 2000), 400, new ItemStack(this), FluidStack.EMPTY);
+                new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid(), 162000), 400, new ItemStack(this), FluidStack.EMPTY);
     }
 
 }

@@ -39,6 +39,9 @@ import com.hrznstudio.titanium.component.button.ArrowButtonComponent;
 import com.hrznstudio.titanium.component.button.ButtonComponent;
 import com.hrznstudio.titanium.item.BasicItem;
 import com.hrznstudio.titanium.util.FacingUtil;
+import io.github.fabricators_of_create.porting_lib.util.FluidStack;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.nbt.CompoundTag;
@@ -65,9 +68,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -144,23 +144,23 @@ public class ItemInfinityTrident extends ItemInfinity {
                         if (riptideModifier == 0) {
                             consumeFuel(stack);
                             InfinityTridentEntity tridententity = new InfinityTridentEntity(worldIn, playerentity, stack);
-                            tridententity.shootFromRotation(playerentity, playerentity.xRot, playerentity.yRot, 0.0F, 2.5F + (float) riptideModifier * 0.5F, 1.0F);
-                            if (playerentity.abilities.instabuild) {
+                            tridententity.shootFromRotation(playerentity, playerentity.getXRot(), playerentity.getYRot(), 0.0F, 2.5F + (float) riptideModifier * 0.5F, 1.0F);
+                            if (playerentity.isCreative()) {
                                 tridententity.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
                             }
 
                             worldIn.addFreshEntity(tridententity);
                             worldIn.playSound((Player) null, tridententity, SoundEvents.TRIDENT_THROW, SoundSource.PLAYERS, 1.0F, 1.0F);
-                            if (!playerentity.abilities.instabuild) {
-                                playerentity.inventory.removeItem(stack);
+                            if (!playerentity.isCreative()) {
+                                playerentity.getInventory().removeItem(stack);
                             }
                         }
                     }
                 }
                 playerentity.awardStat(Stats.ITEM_USED.get(this));
                 if (riptideModifier > 0 && enoughFuel(stack)) {
-                    float f7 = playerentity.yRot;
-                    float f = playerentity.xRot;
+                    float f7 = playerentity.getYRot();
+                    float f = playerentity.getXRot();
                     float f1 = -Mth.sin(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
                     float f2 = -Mth.sin(f * ((float) Math.PI / 180F));
                     float f3 = Mth.cos(f7 * ((float) Math.PI / 180F)) * Mth.cos(f * ((float) Math.PI / 180F));
@@ -297,12 +297,12 @@ public class ItemInfinityTrident extends ItemInfinity {
                         new Ingredient.ItemValue(new ItemStack(Items.TRIDENT)),
                         new Ingredient.ItemValue(new ItemStack(Items.DIAMOND_BLOCK)),
                         new Ingredient.ItemValue(new ItemStack(Items.DIAMOND_HOE)),
-                        new Ingredient.ItemValue(new ItemStack(ModuleCore.RANGE_ADDONS[11].get())),
+                        new Ingredient.ItemValue(new ItemStack(ModuleCore.RANGE_ADDONS[11])),
                         new Ingredient.TagValue(IndustrialTags.Items.GEAR_GOLD),
                         new Ingredient.TagValue(IndustrialTags.Items.GEAR_GOLD),
                         new Ingredient.TagValue(IndustrialTags.Items.GEAR_GOLD),
                 },
-                new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid().get(), 2000), 400, new ItemStack(this), FluidStack.EMPTY);
+                new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid(), 2000), 400, new ItemStack(this), FluidStack.EMPTY);
     }
 
     @Override

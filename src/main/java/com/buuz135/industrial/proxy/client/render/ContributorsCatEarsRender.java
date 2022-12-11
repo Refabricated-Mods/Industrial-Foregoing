@@ -27,6 +27,8 @@ import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.reward.storage.ClientRewardStorage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -38,8 +40,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Calendar;
 
@@ -56,7 +56,7 @@ public class ContributorsCatEarsRender extends RenderLayer<AbstractClientPlayer,
             return;
         stack.pushPose();
         stack.translate(0, -0.015f, 0);
-        if (!entitylivingbaseIn.inventory.armor.get(3).isEmpty()) stack.translate(0, -0.02f, 0);
+        if (!entitylivingbaseIn.getInventory().armor.get(3).isEmpty()) stack.translate(0, -0.02f, 0);
         if (entitylivingbaseIn.isCrouching()) stack.translate(0, 0.27f, 0);
         String type = ClientRewardStorage.REWARD_STORAGE.getRewards().get(entitylivingbaseIn.getUUID()).getEnabled().get(new ResourceLocation(Reference.MOD_ID, "cat_ears"));
         stack.mulPose(Vector3f.YP.rotationDegrees(90));

@@ -25,30 +25,27 @@ package com.buuz135.industrial.module;
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.block.misc.*;
 import com.buuz135.industrial.utils.Reference;
-import com.hrznstudio.titanium.event.handler.EventManager;
-import com.hrznstudio.titanium.module.DeferredRegistryHelper;
 import com.hrznstudio.titanium.module.RegistryHelper;
 import com.hrznstudio.titanium.tab.AdvancedTitaniumTab;
 import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.tuple.Pair;
 
 
 public class ModuleMisc implements IModule {
 
-    public static AdvancedTitaniumTab TAB_MISC = new AdvancedTitaniumTab(Reference.MOD_ID + "_misc", true);
-    public static Pair<Block, BlockEntityType<?>> STASIS_CHAMBER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("stasis_chamber", () -> new StasisChamberBlock());
-    public static Pair<Block, BlockEntityType<?>> MOB_DETECTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("mob_detector", () -> new MobDetectorBlock());
-    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_SORTER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_sorter", () -> new EnchantmentSorterBlock());
-    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_APPLICATOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_applicator", () -> new EnchantmentApplicatorBlock());
-    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_EXTRACTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_extractor", () -> new EnchantmentExtractorBlock());
-    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_FACTORY = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_factory", () -> new EnchantmentFactoryBlock());
-    public static Pair<Block, BlockEntityType<?>> INFINITY_CHARGER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("infinity_charger", () -> new InfinityChargerBlock());
+    public static AdvancedTitaniumTab TAB_MISC = new AdvancedTitaniumTab(new ResourceLocation(Reference.MOD_ID, "misc"), true);
+    public static Pair<Block, BlockEntityType<?>> STASIS_CHAMBER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("stasis_chamber", StasisChamberBlock::new);
+    public static Pair<Block, BlockEntityType<?>> MOB_DETECTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("mob_detector", MobDetectorBlock::new);
+    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_SORTER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_sorter", EnchantmentSorterBlock::new);
+    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_APPLICATOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_applicator", EnchantmentApplicatorBlock::new);
+    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_EXTRACTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_extractor", EnchantmentExtractorBlock::new);
+    public static Pair<Block, BlockEntityType<?>> ENCHANTMENT_FACTORY = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("enchantment_factory", EnchantmentFactoryBlock::new);
+    public static Pair<Block, BlockEntityType<?>> INFINITY_CHARGER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("infinity_charger", InfinityChargerBlock::new);
 
     @Override
     public void generateFeatures(RegistryHelper helper) {

@@ -29,8 +29,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.buuz135.industrial.block.generator.mycelial.IMycelialGeneratorType;
-import net.minecraftforge.common.util.INBTSerializable;
 
+import io.github.fabricators_of_create.porting_lib.util.INBTSerializable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;

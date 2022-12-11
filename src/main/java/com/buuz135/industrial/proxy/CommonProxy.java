@@ -22,15 +22,16 @@
 
 package com.buuz135.industrial.proxy;
 
-import com.buuz135.industrial.proxy.event.FakePlayerRideEntityHandler;
 import com.buuz135.industrial.proxy.event.MeatFeederTickHandler;
-import com.buuz135.industrial.proxy.event.MobDeathHandler;
-import com.buuz135.industrial.proxy.event.SkullHandler;
 import com.buuz135.industrial.utils.explosion.ExplosionTickHandler;
 import com.hrznstudio.titanium.event.handler.EventManager;
+import dev.cafeteria.fakeplayerapi.server.FakeServerPlayer;
+import io.github.fabricators_of_create.porting_lib.event.common.LivingEntityEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.MountEntityCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
@@ -53,10 +54,18 @@ public class CommonProxy {
     };
 
     public void run() {
-        MinecraftForge.EVENT_BUS.register(new StrawRegistry());
-        MinecraftForge.EVENT_BUS.register(new MobDeathHandler());
-        MinecraftForge.EVENT_BUS.register(new FakePlayerRideEntityHandler());
-        MinecraftForge.EVENT_BUS.register(new SkullHandler());
+        StrawRegistry.register();
+        MountEntityCallback.EVENT.register(((mounted, mounting, b) -> {
+            if (mounting instanceof FakeServerPlayer) return InteractionResult.FAIL;
+            return InteractionResult.PASS;
+        }));
+        LivingEntityEvents.DROPS.register(((livingEntity, damageSource, collection) -> {
+            if (damageSource.equals(custom)) {
+                collection.clear();
+                return true;
+            }
+            return false;
+        }));
 
         EventManager.forge(LivingEvent.LivingUpdateEvent.class).process(MeatFeederTickHandler::onTick).subscribe();
         EventManager.forge(TickEvent.ServerTickEvent.class).process(ExplosionTickHandler::serverTick).subscribe();

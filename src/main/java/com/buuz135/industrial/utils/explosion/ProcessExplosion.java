@@ -39,7 +39,6 @@ import net.minecraft.util.Mth;
 import com.mojang.math.Vector3f;
 import net.minecraft.world.level.levelgen.synth.SimplexNoise;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.fluids.IFluidBlock;
 
 import java.util.Arrays;
 import java.util.HashSet;

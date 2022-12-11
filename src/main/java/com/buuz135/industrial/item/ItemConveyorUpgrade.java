@@ -25,6 +25,7 @@ package com.buuz135.industrial.item;
 import com.buuz135.industrial.api.IBlockContainer;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgradeFactory;
 import com.buuz135.industrial.block.transportstorage.tile.ConveyorTile;
+import com.buuz135.industrial.utils.Reference;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -40,7 +41,7 @@ public class ItemConveyorUpgrade extends IFCustomItem {
     private final ConveyorUpgradeFactory factory;
 
     public ItemConveyorUpgrade(ConveyorUpgradeFactory upgradeFactory, CreativeModeTab group) {
-        super("conveyor_" + upgradeFactory.getRegistryName().getPath() + "_upgrade", group);
+        super("conveyor_" + upgradeFactory.getName() + "_upgrade", group);
         this.factory = upgradeFactory;
         this.factory.setUpgradeItem(this);
     }
@@ -67,7 +68,7 @@ public class ItemConveyorUpgrade extends IFCustomItem {
     public String getDescriptionId(ItemStack stack) {
         if (factory == null)
             return "conveyor.upgrade.error";
-        return String.format("conveyor.upgrade.%s.%s", factory.getRegistryName().getNamespace(), factory.getRegistryName().getPath());
+        return String.format("conveyor.upgrade.%s.%s", Reference.MOD_ID, factory.getName());
     }
 
 

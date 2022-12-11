@@ -32,7 +32,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.energy.CapabilityEnergy;
 
 public class InfinityChargerTile extends IndustrialMachineTile<InfinityChargerTile> {
 
@@ -54,13 +53,13 @@ public class InfinityChargerTile extends IndustrialMachineTile<InfinityChargerTi
             chargingSlot.getStackInSlot(0).getCapability(CapabilityEnergy.ENERGY).ifPresent(iEnergyStorage -> {
                 if (this.getEnergyStorage() instanceof InfinityEnergyStorage) {
                     if (iEnergyStorage instanceof InfinityEnergyStorage) {
-                        long added = Math.min(Long.MAX_VALUE - ((InfinityEnergyStorage) iEnergyStorage).getLongEnergyStored(), Math.min(((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).getLongCapacity(), ((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).getLongEnergyStored()));
-                        ((InfinityEnergyStorage) iEnergyStorage).setEnergyStored(((InfinityEnergyStorage) iEnergyStorage).getLongEnergyStored() + added);
-                        ((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).setEnergyStored(((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).getLongEnergyStored() - added);
+                        long added = Math.min(Long.MAX_VALUE - ((InfinityEnergyStorage) iEnergyStorage).getAmount(), Math.min(this.getEnergyStorage().getCapacity(), this.getEnergyStorage().getAmount()));
+                        ((InfinityEnergyStorage) iEnergyStorage).setEnergyStored(((InfinityEnergyStorage) iEnergyStorage).getAmount() + added);
+                        this.getEnergyStorage().setEnergyStored(this.getEnergyStorage().getAmount() - added);
                         markForUpdate();
                     } else {
-                        int extracted = this.getEnergyStorage().getAmount();
-                        ((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).setEnergyStored(((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).getLongEnergyStored() - iEnergyStorage.receiveEnergy(extracted, false));
+                        long extracted = this.getEnergyStorage().getAmount();
+                        ((InfinityEnergyStorage<InfinityChargerTile>) this.getEnergyStorage()).setEnergyStored(this.getEnergyStorage().getAmount() - iEnergyStorage.receiveEnergy(extracted, false));
                         markForUpdate();
                     }
                 }

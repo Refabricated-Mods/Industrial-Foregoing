@@ -28,6 +28,7 @@ import com.buuz135.industrial.block.generator.mycelial.IMycelialGeneratorType;
 import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.module.RegistryHelper;
 import com.hrznstudio.titanium.tab.AdvancedTitaniumTab;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -38,13 +39,13 @@ import java.util.List;
 
 public class ModuleGenerator implements IModule {
 
-    public static AdvancedTitaniumTab TAB_GENERATOR = new AdvancedTitaniumTab(Reference.MOD_ID + "_generator", true);
+    public static AdvancedTitaniumTab TAB_GENERATOR = new AdvancedTitaniumTab(new ResourceLocation(Reference.MOD_ID, "generator"), true);
 
-    public static Pair<Block, BlockEntityType<?>> PITIFUL_GENERATOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("pitiful_generator", () -> new PitifulGeneratorBlock());
-    public static Pair<Block, BlockEntityType<?>> BIOREACTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("bioreactor", () -> new BioReactorBlock());
-    public static Pair<Block, BlockEntityType<?>> BIOFUEL_GENERATOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("biofuel_generator", () -> new BiofuelGeneratorBlock());
+    public static Pair<Block, BlockEntityType<?>> PITIFUL_GENERATOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("pitiful_generator", PitifulGeneratorBlock::new);
+    public static Pair<Block, BlockEntityType<?>> BIOREACTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("bioreactor", BioReactorBlock::new);
+    public static Pair<Block, BlockEntityType<?>> BIOFUEL_GENERATOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("biofuel_generator", BiofuelGeneratorBlock::new);
     public static List<Pair<Block, BlockEntityType<?>>> MYCELIAL_GENERATORS = new ArrayList<>();
-    public static Pair<Block, BlockEntityType<?>> MYCELIAL_REACTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("mycelial_reactor", () -> new MycelialReactorBlock());
+    public static Pair<Block, BlockEntityType<?>> MYCELIAL_REACTOR = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("mycelial_reactor", MycelialReactorBlock::new);
 
     @Override
     public void generateFeatures(RegistryHelper helper) {

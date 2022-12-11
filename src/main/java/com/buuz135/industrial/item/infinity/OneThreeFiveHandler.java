@@ -26,35 +26,39 @@ import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.proxy.client.particle.ParticleVex;
 import com.buuz135.industrial.proxy.network.SpecialParticleMessage;
 import com.buuz135.industrial.utils.Reference;
+import io.github.fabricators_of_create.porting_lib.event.common.PlayerTickEvents;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-@Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 public class OneThreeFiveHandler {
 
     private static final String SPECIAL = "135135";
 
     public static HashMap<UUID, Long> SPECIAL_ENTITIES = new HashMap<>();
 
+    public static void initClient(){
+        ClientTickEvents.END_CLIENT_TICK.register(client -> onClientTick());
+    }
+
+    public static void  init(){
+        PlayerTickEvents.START.register(OneThreeFiveHandler::onPlayerTick);
+    }
+
     @Environment(EnvType.CLIENT)
-    @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
+    public static void onClientTick() {
+
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.level != null && !Minecraft.getInstance().isPaused() && Minecraft.getInstance().player.level.getGameTime() % 5 == 0) {
             BlockPos pos = new BlockPos(Minecraft.getInstance().player.blockPosition().getX(), Minecraft.getInstance().player.blockPosition().getY(), Minecraft.getInstance().player.blockPosition().getZ());
             Minecraft.getInstance().player.level.getEntitiesOfClass(LivingEntity.class, new AABB(pos.offset(32, 32, 32), pos.offset(-32, -32, -32)),
@@ -73,20 +77,17 @@ public class OneThreeFiveHandler {
         toRemove.forEach(uuid -> SPECIAL_ENTITIES.remove(uuid));
     }
 
-    @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) return;
-        if (event.player.level.getGameTime() % 20 == 0) {
-            for (ItemStack stack : event.player.inventory.items) {
+    public static void onPlayerTick(Player player) {
+        if (player.level.getGameTime() % 20 == 0) {
+            for (ItemStack stack : player.getInventory().items) {
                 if (stack.getItem() instanceof ItemInfinity && ((ItemInfinity) stack.getItem()).isSpecial(stack) && ((ItemInfinity) stack.getItem()).isSpecialEnabled(stack)) {
-                    IndustrialForegoing.NETWORK.sendToNearby(event.player.level, new BlockPos(event.player.blockPosition().getX(), event.player.blockPosition().getY(), event.player.blockPosition().getZ()), 64, new SpecialParticleMessage(event.player.getUUID()));
+                    IndustrialForegoing.NETWORK.sendToNearby(player.level, new BlockPos(player.blockPosition().getX(), player.blockPosition().getY(), player.blockPosition().getZ()), 64, new SpecialParticleMessage(player.getUUID()));
                     return;
                 }
             }
         }
     }
 
-    @SubscribeEvent
     public static void onEntityKill(LivingDeathEvent event) {
         if (event.getEntityLiving().getUUID().toString().contains(SPECIAL) && event.getSource().getEntity() instanceof Player && !(event.getSource().getEntity() instanceof FakePlayer)) {
             Player player = (Player) event.getSource().getEntity();

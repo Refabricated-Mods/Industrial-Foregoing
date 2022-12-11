@@ -22,14 +22,13 @@
 
 package com.buuz135.industrial.proxy.event;
 
-import net.minecraftforge.event.entity.living.LivingEvent;
 
 public class MeatFeederTickHandler {
 
 
-    public static void onTick(LivingEvent.LivingUpdateEvent event) {
+    /*public static void onTick(LivingEvent.LivingUpdateEvent event) {
 
-    }
+    }*/
 
 
 }

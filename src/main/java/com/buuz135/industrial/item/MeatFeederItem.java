@@ -25,6 +25,7 @@ package com.buuz135.industrial.item;
 import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.module.ModuleTool;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
+import me.alphamode.forgetags.Tags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.nbt.CompoundTag;
@@ -36,12 +37,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
@@ -97,7 +92,7 @@ public class MeatFeederItem extends IFCustomItem {
         if (!worldIn.isClientSide && entityIn instanceof Player) {
             Player player = (Player) entityIn;
             if (player.getFoodData().needsFood() || player.getFoodData().getSaturationLevel() < 10) {
-                if (stack.getItem().equals(ModuleTool.MEAT_FEEDER.get())) {
+                if (stack.getItem().equals(ModuleTool.MEAT_FEEDER)) {
                         meatTick(stack, player);
                 }
             }
@@ -118,7 +113,7 @@ public class MeatFeederItem extends IFCustomItem {
     public void registerRecipe(Consumer<FinishedRecipe> consumer) {
         TitaniumShapedRecipeBuilder.shapedRecipe(this)
                 .pattern("pip").pattern("gig").pattern(" i ")
-                .define('p', ModuleCore.PLASTIC.get())
+                .define('p', ModuleCore.PLASTIC)
                 .define('i', Tags.Items.INGOTS_IRON)
                 .define('g', Items.GLASS_BOTTLE)
                 .save(consumer);

@@ -108,7 +108,7 @@ dependencies {
     }
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation('com.github.Refabricated-Mods:Titanium:573ed527ed'){
+    modImplementation('com.github.Refabricated-Mods:Titanium:7acde33712'){
         exclude(group: "net.fabricmc")
     }
 

@@ -30,6 +30,10 @@ import com.buuz135.industrial.recipe.DissolutionChamberRecipe;
 import com.buuz135.industrial.utils.BlockUtils;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.util.RayTraceUtils;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemHandlerHelper;
+import io.github.fabricators_of_create.porting_lib.util.FluidStack;
+import io.github.fabricators_of_create.porting_lib.util.PortingHooks;
+import io.github.feltmc.feltapi.api.item.extensions.EnchantabilityItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -50,9 +54,6 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class ItemInfinityDrill extends ItemInfinity {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return Items.DIAMOND_PICKAXE.canApplyAtEnchantingTable(new ItemStack(Items.DIAMOND_PICKAXE), enchantment) || Items.DIAMOND_SHOVEL.canApplyAtEnchantingTable(new ItemStack(Items.DIAMOND_SHOVEL), enchantment) ;
+        return Items.DIAMOND_PICKAXE.canApplyAtEnchantingTable(enchantment) || Items.DIAMOND_SHOVEL.canApplyAtEnchantingTable(new ItemStack(Items.DIAMOND_SHOVEL), enchantment) ;
     }
 
     @Override
@@ -96,7 +97,7 @@ public class ItemInfinityDrill extends ItemInfinity {
                         Block block = tempState.getBlock();
                         if (!BlockUtils.isBlockstateInMaterial(tempState, mineableMaterials)) return;
                         if (tempState.getDestroySpeed(worldIn, blockPos) < 0) return;
-                        int xp = ForgeHooks.onBlockBreakEvent(worldIn, ((ServerPlayer) entityLiving).gameMode.getGameModeForPlayer(), (ServerPlayer) entityLiving, blockPos);
+                        int xp = PortingHooks.onBlockBreakEvent(worldIn, ((ServerPlayer) entityLiving).gameMode.getGameModeForPlayer(), (ServerPlayer) entityLiving, blockPos);
                         if (xp >= 0 && block.onDestroyedByPlayer(tempState, worldIn, blockPos, (Player) entityLiving, true, tempState.getFluidState())) {
                             block.destroy(worldIn, blockPos, tempState);
                             //block.harvestBlock(worldIn, (PlayerEntity) entityLiving, blockPos, tempState, null, stack);
@@ -135,12 +136,12 @@ public class ItemInfinityDrill extends ItemInfinity {
                         new Ingredient.ItemValue(new ItemStack(Items.DIAMOND_SHOVEL)),
                         new Ingredient.ItemValue(new ItemStack(Items.DIAMOND_BLOCK)),
                         new Ingredient.ItemValue(new ItemStack(Items.DIAMOND_BLOCK)),
-                        new Ingredient.ItemValue(new ItemStack(ModuleCore.RANGE_ADDONS[11].get())),
+                        new Ingredient.ItemValue(new ItemStack(ModuleCore.RANGE_ADDONS[11])),
                         new Ingredient.TagValue(IndustrialTags.Items.GEAR_GOLD),
                         new Ingredient.TagValue(IndustrialTags.Items.GEAR_GOLD),
                         new Ingredient.TagValue(IndustrialTags.Items.GEAR_GOLD),
                 },
-                new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid().get(), 2000), 400, new ItemStack(this), FluidStack.EMPTY);
+                new FluidStack(ModuleCore.PINK_SLIME.getSourceFluid(), 162000), 400, new ItemStack(this), FluidStack.EMPTY);
     }
 
 //    public void configuration(Configuration config) {TODO

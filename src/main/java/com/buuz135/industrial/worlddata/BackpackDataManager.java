@@ -22,6 +22,8 @@
 
 package com.buuz135.industrial.worlddata;
 
+import com.buuz135.industrial.utils.ItemStackUtils;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandler;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.LevelAccessor;
@@ -94,7 +96,7 @@ public class BackpackDataManager extends SavedData {
         return null;
     }
 
-    public static class BackpackItemHandler implements IItemHandler, INBTSerializable<CompoundTag> {
+    public static class BackpackItemHandler extends ItemStackHandler {
 
         private List<SlotDefinition> definitionList;
         private int maxAmount;
@@ -138,7 +140,7 @@ public class BackpackDataManager extends SavedData {
         @Nonnull
         @Override
         public ItemStack getStackInSlot(int slot) {
-            return ItemHandlerHelper.copyStackWithSize(definitionList.get(slot).getStack(), definitionList.get(slot).getAmount());
+            return definitionList.get(slot).getStack().copy();
         }
 
         @Nonnull

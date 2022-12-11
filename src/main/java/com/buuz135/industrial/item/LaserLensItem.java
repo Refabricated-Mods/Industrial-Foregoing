@@ -24,6 +24,8 @@ package com.buuz135.industrial.item;
 
 import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.recipe.DissolutionChamberRecipe;
+import io.github.fabricators_of_create.porting_lib.util.FluidStack;
+import me.alphamode.forgetags.Tags;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -31,8 +33,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.function.Consumer;
 
@@ -43,7 +43,7 @@ public class LaserLensItem extends IFCustomItem {
     private int color;
 
     public LaserLensItem(int color) {
-        super("laser_lens" + color, ModuleCore.TAB_CORE, new Properties().stacksTo(1));
+        super("laser_lens" + color, ModuleCore.TAB_CORE.getTab(), new Properties().stacksTo(1));
         this.color = color;
     }
 
@@ -57,7 +57,7 @@ public class LaserLensItem extends IFCustomItem {
                         new Ingredient.TagValue(Tags.Items.GLASS_PANES),
                         new Ingredient.TagValue(DyeColor.byId(color).getTag()),
                 },
-                new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 250), 100, new ItemStack(this), FluidStack.EMPTY);
+                new FluidStack(ModuleCore.LATEX.getSourceFluid(), 250 * 81), 100, new ItemStack(this), FluidStack.EMPTY);
     }
 
     @Override

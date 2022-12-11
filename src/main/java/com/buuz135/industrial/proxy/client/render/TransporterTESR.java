@@ -126,7 +126,7 @@ public class TransporterTESR implements BlockEntityRenderer<TransporterTile> {
         for (Direction direction : transporters.keySet()) {
             if (transporters.get(direction).getAction() == TransporterTypeFactory.TransporterAction.EXTRACT) {
                 for (Direction other : transporters.keySet()) {
-                    if (direction == other || !transporters.get(direction).getFactory().getRegistryName().equals(transporters.get(other).getFactory().getRegistryName()) || transporters.get(other).getAction() == TransporterTypeFactory.TransporterAction.EXTRACT)
+                    if (direction == other || !transporters.get(direction).getFactory().getName().equals(transporters.get(other).getFactory().getName()) || transporters.get(other).getAction() == TransporterTypeFactory.TransporterAction.EXTRACT)
                         continue;
                     for (int i = -1; i < TransporterItemType.QUEUE_SIZE; ++i) {
                         stack.pushPose();

@@ -28,11 +28,9 @@ import com.hrznstudio.titanium.api.client.IScreenAddon;
 import com.hrznstudio.titanium.component.IComponentHarness;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import com.hrznstudio.titanium.container.addon.IContainerAddon;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.Tag;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -41,82 +39,54 @@ import java.util.List;
 public class InfinityEnergyStorage<T extends IComponentHarness> extends EnergyStorageComponent<T> {
 
     private final long capacity;
-    private long energy;
 
     public InfinityEnergyStorage(long capacity, int xPos, int yPos) {
         super(Integer.MAX_VALUE, xPos, yPos);
-        this.energy = 0;
         this.capacity = capacity;
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        if (!canReceive()) return 0;
-        long stored = getLongEnergyStored();
-        int energyReceived = (int) Math.min(capacity - stored, Math.min(Long.MAX_VALUE, maxReceive));
-        if (!simulate)
-            setEnergyStored(stored + energyReceived);
+    public long insert(long maxAmount, TransactionContext transaction) {
+        if (!supportsInsertion()) return 0;
+        long stored = getAmount();
+        long energyReceived = Math.min(capacity - stored, Math.min(Long.MAX_VALUE, maxAmount));
+        transaction.addCloseCallback((c, r) -> {
+            if (r.wasCommitted()) setEnergyStored(stored + energyReceived);
+        });
         return energyReceived;
     }
 
     @Override
-    public int extractEnergy(int maxExtract, boolean simulate) {
+    public long extract(long maxAmount, TransactionContext transaction) {
         return 0;
     }
 
-    @Override
-    public int getEnergyStored() {
-        return this.energy > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) this.energy;
-    }
-
     public void setEnergyStored(long power) {
-        this.energy = power;
+        super.setEnergyStored(power);
         if (this.componentHarness != null) {
             this.componentHarness.markComponentForUpdate(false);
         }
     }
 
     @Override
-    public int getMaxEnergyStored() {
-        return (int) capacity;
+    public long getCapacity() {
+        return capacity;
     }
 
     @Override
-    public boolean canExtract() {
-        return false;
-    }
-
-    @Override
-    public boolean canReceive() {
+    public boolean supportsInsertion() {
         return true;
     }
 
-    public long getLongEnergyStored() {
-        return this.energy;
-    }
-
-    public long getLongCapacity() {
-        return capacity;
+    @Override
+    public boolean supportsExtraction() {
+        return false;
     }
 
     @Override
     @Nonnull
     public List<IFactory<? extends IContainerAddon>> getContainerAddons() {
         return Collections.emptyList();
-    }
-
-    @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag nbt = new CompoundTag();
-        nbt.putLong("energy", this.energy);
-        return nbt;
-    }
-
-    @Override
-    public void deserializeNBT(Tag nbt) {
-        if (nbt instanceof CompoundTag compoundTag){
-            this.energy = compoundTag.getLong("energy");
-        }
     }
 
     @Nonnull

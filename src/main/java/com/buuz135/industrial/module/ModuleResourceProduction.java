@@ -27,6 +27,7 @@ import com.buuz135.industrial.block.resourceproduction.*;
 import com.buuz135.industrial.utils.Reference;
 import com.hrznstudio.titanium.module.RegistryHelper;
 import com.hrznstudio.titanium.tab.AdvancedTitaniumTab;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -37,7 +38,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class ModuleResourceProduction implements IModule {
 
-    public static AdvancedTitaniumTab TAB_RESOURCE = new AdvancedTitaniumTab(Reference.MOD_ID + "_resource_production", true);
+    public static AdvancedTitaniumTab TAB_RESOURCE = new AdvancedTitaniumTab(new ResourceLocation(Reference.MOD_ID, "resource_production"), true);
 
     public static Pair<Block, BlockEntityType<?>> RESOURCEFUL_FURNACE = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("resourceful_furnace", ResourcefulFurnaceBlock::new);
     public static Pair<Block, BlockEntityType<?>> SLUDGE_REFINER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("sludge_refiner", SludgeRefinerBlock::new);

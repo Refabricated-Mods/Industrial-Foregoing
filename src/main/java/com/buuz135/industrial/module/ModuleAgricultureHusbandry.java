@@ -29,6 +29,7 @@ import com.buuz135.industrial.utils.Reference;
 import com.buuz135.industrial.utils.apihandlers.plant.*;
 import com.hrznstudio.titanium.module.RegistryHelper;
 import com.hrznstudio.titanium.tab.AdvancedTitaniumTab;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -36,7 +37,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class ModuleAgricultureHusbandry implements IModule {
 
-    public static AdvancedTitaniumTab TAB_AG_HUS = new AdvancedTitaniumTab(Reference.MOD_ID + "_ag_hus", true);
+    public static AdvancedTitaniumTab TAB_AG_HUS = new AdvancedTitaniumTab(new ResourceLocation(Reference.MOD_ID, "ag_hus"), true);
 
     public static Pair<Block, BlockEntityType<?>> PLANT_GATHERER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("plant_gatherer", PlantGathererBlock::new);
     public static Pair<Block, BlockEntityType<?>> SEWER = IndustrialForegoing.INSTANCE.getRegistries().registerBlockWithTile("sewer", SewerBlock::new);

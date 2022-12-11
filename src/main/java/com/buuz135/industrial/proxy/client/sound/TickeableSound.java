@@ -45,6 +45,8 @@
  */
 package com.buuz135.industrial.proxy.client.sound;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.client.resources.sounds.AbstractSoundInstance;
@@ -52,8 +54,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 @Environment(EnvType.CLIENT)
 public class TickeableSound extends AbstractSoundInstance implements TickableSoundInstance {

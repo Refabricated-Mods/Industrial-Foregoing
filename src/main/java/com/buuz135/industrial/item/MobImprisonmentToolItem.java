@@ -24,6 +24,7 @@ package com.buuz135.industrial.item;
 import com.buuz135.industrial.utils.IndustrialTags;
 import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import com.hrznstudio.titanium.util.TagUtil;
+import net.minecraft.core.Registry;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -46,10 +47,6 @@ import net.minecraft.world.level.Level;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
-
-import com.hrznstudio.titanium.item.BasicItem.Key;
-import net.minecraft.world.item.Item.Properties;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class MobImprisonmentToolItem extends IFCustomItem {
 
@@ -101,7 +98,7 @@ public class MobImprisonmentToolItem extends IFCustomItem {
     }
 
     public boolean isBlacklisted(EntityType<?> entity) {
-        return TagUtil.hasTag(ForgeRegistries.ENTITIES, entity, IndustrialTags.EntityTypes.MOB_IMPRISONMENT_TOOL_BLACKLIST);
+        return TagUtil.hasTag(Registry.ENTITY_TYPE, entity, IndustrialTags.EntityTypes.MOB_IMPRISONMENT_TOOL_BLACKLIST);
     }
 
     public boolean containsEntity(ItemStack stack) {
@@ -128,7 +125,7 @@ public class MobImprisonmentToolItem extends IFCustomItem {
     public Entity getEntityFromStack(ItemStack stack, Level world, boolean withInfo, boolean applyDuplicatorFilter) {
         if (stack.hasTag()) {
             EntityType type = EntityType.byString(stack.getTag().getString("entity")).orElse(null);
-            if (type != null && !(applyDuplicatorFilter && ForgeRegistries.ENTITIES.tags().getTag(IndustrialTags.EntityTypes.MOB_DUPLICATOR_BLACKLIST).contains(type))) {
+            if (type != null && !(applyDuplicatorFilter && type.is(IndustrialTags.EntityTypes.MOB_DUPLICATOR_BLACKLIST))) {
                 Entity entity = type.create(world);
                 if (withInfo) {
                     entity.load(stack.getTag());

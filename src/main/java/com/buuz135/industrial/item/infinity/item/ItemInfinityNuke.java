@@ -28,6 +28,7 @@ import com.buuz135.industrial.item.infinity.ItemInfinity;
 import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.module.ModuleTool;
 import com.buuz135.industrial.recipe.DissolutionChamberRecipe;
+import io.github.fabricators_of_create.porting_lib.util.FluidStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.InteractionResult;
@@ -36,7 +37,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.function.Consumer;
 
@@ -51,7 +51,7 @@ public class ItemInfinityNuke extends ItemInfinity {
 
     public static int getRadius(ItemStack stack) {
         int tier = getSelectedTier(stack).getRadius() + 1;
-        double fluidAmount = 1 + ((ItemInfinityNuke)ModuleTool.INFINITY_NUKE.get()).getFuelFromStack(stack) / 1_000_000D * 0.5;
+        double fluidAmount = 1 + ((ItemInfinityNuke)ModuleTool.INFINITY_NUKE).getFuelFromStack(stack) / 1_000_000D * 0.5;
         return (int) ((1 + Math.ceil((tier * tier * tier) / 2D)) * fluidAmount);
     }
 
@@ -79,11 +79,11 @@ public class ItemInfinityNuke extends ItemInfinity {
                         new Ingredient.ItemValue(new ItemStack(Items.TNT)),
                         new Ingredient.ItemValue(new ItemStack(Items.TNT)),
                         new Ingredient.ItemValue(new ItemStack(Items.TNT)),
-                        new Ingredient.ItemValue(new ItemStack(ModuleCore.RANGE_ADDONS[11].get())),
+                        new Ingredient.ItemValue(new ItemStack(ModuleCore.RANGE_ADDONS[11])),
                         new Ingredient.ItemValue(new ItemStack(Items.DIAMOND_BLOCK)),
                         new Ingredient.ItemValue(new ItemStack(Items.NETHER_STAR)),
                         new Ingredient.ItemValue(new ItemStack(Items.NETHER_STAR)),
                 },
-                new FluidStack(ModuleCore.ETHER.getSourceFluid().get(), 2000), 400, new ItemStack(this), FluidStack.EMPTY);
+                new FluidStack(ModuleCore.ETHER.getSourceFluid(), 162000), 400, new ItemStack(this), FluidStack.EMPTY);
     }
 }

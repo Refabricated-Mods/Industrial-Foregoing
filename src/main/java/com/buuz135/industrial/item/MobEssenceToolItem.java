@@ -22,6 +22,7 @@
 
 package com.buuz135.industrial.item;
 
+import net.minecraft.core.Registry;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -69,7 +70,7 @@ public class MobEssenceToolItem extends IFCustomItem {
     public InteractionResult interactLivingEntity(ItemStack stack, Player playerIn, LivingEntity target, InteractionHand hand) {
         if (stack.hasTag() && stack.getTag().getInt("Kills") == 0) {
             CompoundTag compoundNBT = new CompoundTag();
-            compoundNBT.putString("Entity", target.getType().getRegistryName().toString());
+            compoundNBT.putString("Entity", Registry.ENTITY_TYPE.getKey(target.getType()).toString());
             compoundNBT.putInt("Kills", 1);
             stack.setTag(compoundNBT);
             playerIn.setItemInHand(hand, stack);

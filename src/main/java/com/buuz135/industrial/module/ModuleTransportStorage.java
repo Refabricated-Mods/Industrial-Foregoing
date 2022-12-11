@@ -46,6 +46,7 @@ import com.hrznstudio.titanium.module.RegistryHelper;
 import com.hrznstudio.titanium.tab.AdvancedTitaniumTab;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -113,10 +114,10 @@ public class ModuleTransportStorage implements IModule {
 
     @Override
     public void generateFeatures(RegistryHelper registryHelper) {
-        TAB_TRANSPORT.addIconStack(() -> new ItemStack(CONVEYOR.getLeft().orElse(Blocks.STONE)));
-        registryHelper.registerGeneric(Registry.MENU, "conveyor", () ->  (MenuType) IForgeMenuType.create(ContainerConveyor::new));
+        TAB_TRANSPORT.addIconStack(() -> new ItemStack(CONVEYOR.getLeft()));
+        registryHelper.registerGeneric(Registry.MENU, "conveyor", () ->  new ExtendedScreenHandlerType<>(ContainerConveyor::new));
         ConveyorUpgradeFactory.FACTORIES.forEach(conveyorUpgradeFactory -> registryHelper.registerGeneric(Registry.ITEM,"conveyor_" + conveyorUpgradeFactory.getName() + "_upgrade", () -> new ItemConveyorUpgrade(conveyorUpgradeFactory, TAB_TRANSPORT)));
-        registryHelper.registerGeneric(Registry.MENU, "transporter", () -> (MenuType) IForgeMenuType.create(ContainerTransporter::new));
+        registryHelper.registerGeneric(Registry.MENU, "transporter", () -> new ExtendedScreenHandlerType<>(ContainerTransporter::new));
         TransporterTypeFactory.FACTORIES.forEach(transporterTypeFactory -> registryHelper.registerGeneric(Registry.ITEM, transporterTypeFactory.getName() + "_transporter_type", () ->  new ItemTransporterType(transporterTypeFactory, TAB_TRANSPORT)));
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> this::onClient);
 

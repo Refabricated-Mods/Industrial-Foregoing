@@ -27,6 +27,7 @@ import com.buuz135.industrial.module.ModuleCore;
 import com.buuz135.industrial.recipe.DissolutionChamberRecipe;
 import com.hrznstudio.titanium.api.augment.IAugmentType;
 import com.hrznstudio.titanium.item.AugmentWrapper;
+import io.github.fabricators_of_create.porting_lib.util.FluidStack;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -40,7 +41,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -94,7 +94,7 @@ public class RangeAddonItem extends IFCustomItem {
                 new Ingredient.ItemValue(new ItemStack(MATERIALS[tier])),
                 new Ingredient.ItemValue(new ItemStack(MATERIALS[tier])),
                 new Ingredient.ItemValue(new ItemStack(MATERIALS[tier]))
-        }, new FluidStack(ModuleCore.LATEX.getSourceFluid().get(), 1000), 200, new ItemStack(this), FluidStack.EMPTY);
+        }, new FluidStack(ModuleCore.LATEX.getSourceFluid(), 81000), 200, new ItemStack(this), FluidStack.EMPTY);
     }
 
     @Override
